@@ -1,0 +1,10 @@
+# 项目数据目录
+.workbuddy/
+
+# 导出的存档文件（个人数据，不应提交）
+*.json
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store

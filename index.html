@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地球Online - 成就系统</title>
+<meta name="description" content="地球Online人生成就系统 - 把人生当作一款MMORPG，记录你的每一个成就">
+<meta name="theme-color" content="#08080d">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #08080d;
+  color: #e8e6e3;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+  padding: 48px 20px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(191,154,38,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header h1 {
+  font-size: 34px;
+  font-weight: 700;
+  color: #bf9a26;
+  letter-spacing: 6px;
+  text-shadow: 0 0 60px rgba(191,154,38,0.2);
+  position: relative;
+}
+.header .subtitle {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #555;
+  letter-spacing: 3px;
+}
+
+/* ── Stats ── */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px 20px 28px;
+}
+.stat-item {
+  background: rgba(191,154,38,0.04);
+  border: 1px solid rgba(191,154,38,0.1);
+  border-radius: 12px;
+  padding: 14px 26px;
+  text-align: center;
+  min-width: 130px;
+  transition: all 0.3s;
+}
+.stat-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(191,154,38,0.25);
+}
+.stat-number {
+  font-size: 26px;
+  font-weight: 700;
+  color: #bf9a26;
+}
+.stat-label {
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+/* ── Toolbar ── */
+.toolbar {
+  max-width: 960px;
+  margin: 0 auto 16px;
+  padding: 0 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+.search-box input {
+  width: 100%;
+  padding: 11px 14px 11px 40px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: #e8e6e3;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.3s;
+}
+.search-box input:focus {
+  border-color: rgba(191,154,38,0.4);
+  background: rgba(191,154,38,0.04);
+}
+.search-box input::placeholder { color: #444; }
+.search-box .search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #444;
+  font-size: 15px;
+  pointer-events: none;
+}
+.toolbar-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sort-btn, .action-btn {
+  padding: 9px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sort-btn:hover, .action-btn:hover { border-color: rgba(255,255,255,0.18); color: #bbb; }
+.sort-btn.active {
+  background: rgba(191,154,38,0.08);
+  border-color: rgba(191,154,38,0.3);
+  color: #bf9a26;
+}
+.sort-btn .arrow { transition: transform 0.3s; }
+.sort-btn.desc .arrow { transform: rotate(180deg); }
+.action-btn.danger { color: #e55; border-color: rgba(229,85,85,0.2); }
+.action-btn.danger:hover { background: rgba(229,85,85,0.08); color: #f77; }
+.action-btn.export-btn:hover { border-color: rgba(191,154,38,0.3); color: #bf9a26; }
+
+/* ── Difficulty sections ── */
+.difficulty-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+.difficulty-label .line { flex: 1; height: 1px; }
+.difficulty-label.legendary { color: #d4a82a; }
+.difficulty-label.legendary .line { background: linear-gradient(90deg, rgba(191,154,38,0.3), transparent); }
+.difficulty-label.epic { color: #c084fc; }
+.difficulty-label.epic .line { background: linear-gradient(90deg, rgba(168,85,247,0.3), transparent); }
+.difficulty-label.rare { color: #60a5fa; }
+.difficulty-label.rare .line { background: linear-gradient(90deg, rgba(59,130,246,0.3), transparent); }
+.difficulty-label.common { color: #888; }
+.difficulty-label.common .line { background: linear-gradient(90deg, rgba(150,150,150,0.2), transparent); }
+
+/* ── Category tabs ── */
+.category-tabs {
+  max-width: 960px;
+  margin: 0 auto 20px;
+  padding: 0 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cat-tab {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  color: #666;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.cat-tab:hover { color: #999; border-color: rgba(255,255,255,0.15); }
+.cat-tab.active {
+  background: rgba(191,154,38,0.08);
+  border-color: rgba(191,154,38,0.25);
+  color: #bf9a26;
+}
+
+/* ── Grid ── */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 14px;
+}
+
+/* ── Card: LOCKED (grey/dark) ── */
+.achievement-card {
+  background: #111116;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+  animation: cardIn 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+@keyframes cardIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.achievement-card.locked {
+  background: #0c0c10;
+  border-color: rgba(255,255,255,0.04);
+}
+.achievement-card.locked .icon-box {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+}
+.achievement-card.locked .icon-svg {
+  stroke: #333;
+  opacity: 0.4;
+}
+.achievement-card.locked .card-title { color: #444; }
+.achievement-card.locked .card-desc { color: #333; }
+.achievement-card.locked .rate-text { color: #333; }
+.achievement-card.locked .rate-text span { color: #444; }
+.achievement-card.locked .rate-bar-bg { background: rgba(255,255,255,0.02); }
+.achievement-card.locked .rate-bar-fill {
+  background: linear-gradient(90deg, #222, #333);
+}
+.achievement-card.locked .card-footer {
+  border-top-color: rgba(255,255,255,0.03);
+}
+.achievement-card.locked .rarity-indicator { opacity: 0.35; }
+.achievement-card.locked:hover {
+  border-color: rgba(255,255,255,0.1);
+  background: #121218;
+  transform: translateY(-2px);
+}
+.achievement-card.locked:hover .icon-svg {
+  stroke: #555;
+  opacity: 0.7;
+}
+.achievement-card.locked:hover .card-title { color: #666; }
+
+/* ── Card: UNLOCKED (golden highlight) ── */
+.achievement-card.unlocked {
+  background: linear-gradient(145deg, #1a170a 0%, #13110a 100%);
+  border-color: rgba(191,154,38,0.2);
+  box-shadow: 0 0 0 rgba(191,154,38,0), inset 0 0 30px rgba(191,154,38,0.02);
+}
+.achievement-card.unlocked::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(191,154,38,0.5), transparent);
+}
+.achievement-card.unlocked .icon-box {
+  background: linear-gradient(135deg, rgba(191,154,38,0.15) 0%, rgba(191,154,38,0.04) 100%);
+  border-color: rgba(191,154,38,0.25);
+}
+.achievement-card.unlocked .icon-svg {
+  stroke: #d4a82a;
+  filter: drop-shadow(0 0 4px rgba(191,154,38,0.3));
+}
+.achievement-card.unlocked .card-title { color: #f5e6a3; }
+.achievement-card.unlocked .card-desc { color: #999; }
+.achievement-card.unlocked .rate-bar-fill {
+  background: linear-gradient(90deg, #8B6914, #d4a82a);
+}
+.achievement-card.unlocked:hover {
+  border-color: rgba(191,154,38,0.4);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 30px rgba(191,154,38,0.06);
+  transform: translateY(-3px);
+}
+
+/* ── Card layout ── */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.icon-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.35s;
+}
+.icon-box .icon-svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 0.35s;
+}
+.icon-box .sparkles {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 10px;
+  color: #d4a82a;
+  filter: drop-shadow(0 0 4px rgba(191,154,38,0.6));
+  animation: twinkle 2s ease infinite;
+}
+@keyframes twinkle {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.card-info { flex: 1; min-width: 0; }
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  transition: color 0.35s;
+}
+.card-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.35s;
+}
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  transition: border-color 0.35s;
+}
+.rate-bar-container { flex: 1; margin-right: 14px; }
+.rate-bar-bg {
+  height: 4px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.rate-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s ease;
+  width: 0%;
+}
+.rate-text {
+  font-size: 10.5px;
+  margin-top: 4px;
+  transition: color 0.35s;
+}
+
+/* ── Rarity badge ── */
+.rarity-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.35s;
+}
+.rarity-common { background: rgba(120,120,120,0.08); color: #666; border: 1px solid rgba(120,120,120,0.12); }
+.rarity-rare { background: rgba(59,130,246,0.08); color: #5090e0; border: 1px solid rgba(59,130,246,0.15); }
+.rarity-epic { background: rgba(168,85,247,0.08); color: #a86fe0; border: 1px solid rgba(168,85,247,0.15); }
+.rarity-legendary { background: rgba(191,154,38,0.08); color: #bf9a26; border: 1px solid rgba(191,154,38,0.2); }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #444;
+}
+.empty-state .empty-icon { font-size: 42px; margin-bottom: 14px; opacity: 0.25; }
+
+/* ── Footer ── */
+.footer-note {
+  text-align: center;
+  padding: 24px 20px 40px;
+  color: #333;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* ── Modal ── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: #14141c;
+  border: 1px solid rgba(191,154,38,0.15);
+  border-radius: 18px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 30px 26px;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #555;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:hover { color: #aaa; border-color: rgba(255,255,255,0.2); }
+
+.modal-icon-wrap { text-align: center; margin-bottom: 18px; }
+.modal-icon {
+  width: 72px; height: 72px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(191,154,38,0.12), rgba(191,154,38,0.02));
+  border: 1px solid rgba(191,154,38,0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-icon .icon-svg {
+  width: 40px; height: 40px;
+  fill: none; stroke: #bf9a26;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.modal-icon.locked-icon {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.06);
+}
+.modal-icon.locked-icon .icon-svg { stroke: #333; opacity: 0.5; }
+.modal-cat-tag {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: rgba(191,154,38,0.06);
+  color: #888;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 14px;
+}
+.modal-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: #e8d8a0;
+  margin-bottom: 8px;
+}
+.modal-title.locked-title { color: #555; }
+.modal-desc {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+.modal-desc.locked-desc { color: #444; }
+.modal-stats {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 20px;
+}
+.modal-stat { text-align: center; }
+.modal-stat-num { font-size: 22px; font-weight: 700; color: #bf9a26; }
+.modal-stat-num.locked-stat { color: #444; }
+.modal-stat-label { font-size: 10.5px; color: #555; margin-top: 2px; }
+.modal-story {
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.04);
+  margin-bottom: 18px;
+}
+.modal-story-label { color: #555; font-size: 11px; margin-bottom: 7px; }
+.modal-story-text { color: #999; font-size: 13px; line-height: 1.75; }
+.modal-toggle-btn {
+  display: block;
+  margin: 0 auto;
+  padding: 9px 28px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 1px solid rgba(191,154,38,0.2);
+  background: rgba(191,154,38,0.06);
+  color: #bf9a26;
+}
+.modal-toggle-btn:hover {
+  background: rgba(191,154,38,0.12);
+  border-color: rgba(191,154,38,0.35);
+}
+.modal-toggle-btn.locked-btn {
+  border-color: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: #666;
+}
+.modal-toggle-btn.locked-btn:hover {
+  border-color: rgba(191,154,38,0.25);
+  color: #bf9a26;
+}
+
+/* ── Toast notification ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1a1a24;
+  border: 1px solid rgba(191,154,38,0.2);
+  color: #e8e6e3;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  z-index: 200;
+  opacity: 0;
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .achievement-grid { grid-template-columns: 1fr; }
+  .header h1 { font-size: 24px; letter-spacing: 3px; }
+  .stat-item { padding: 10px 16px; min-width: 100px; }
+  .stat-number { font-size: 20px; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar-btns { justify-content: center; }
+  .modal { padding: 22px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>地球 Online</h1>
+  <div class="subtitle">Achievement System · 人生成就系统</div>
+</div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="toolbar">
+  <div class="search-box">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="搜索成就名称或描述...">
+  </div>
+  <div class="toolbar-btns">
+    <button class="sort-btn active" id="sortBtn" onclick="toggleSort()">
+      解锁难度 <span class="arrow">&#9650;</span>
+    </button>
+    <button class="action-btn export-btn" onclick="exportProgress()" title="导出存档到文件">
+      &#128229; 导出
+    </button>
+    <button class="action-btn export-btn" onclick="document.getElementById('importFile').click()" title="从文件导入存档">
+      &#128228; 导入
+    </button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importProgress(this)">
+    <button class="action-btn danger" onclick="resetProgress()" title="清除本地存档，恢复初始状态">
+      &#8634; 重置
+    </button>
+  </div>
+</div>
+
+<div class="category-tabs" id="categoryTabs"></div>
+
+<div class="container" id="mainContainer">
+  <div class="achievement-grid" id="grid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon">&#128270;</div>
+    <p>没有找到匹配的成就</p>
+  </div>
+</div>
+
+<div class="footer-note">
+  地球Online v2026.06 · 每个人都是自己人生的主角
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Achievement Data ──
+const achievements = [
+  { id:1, title:"主角登场", desc:"成功创建专属角色，正式登陆地球Online服务器。", rate:100, category:"新手", rarity:"common",
+    icon:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z",
+    detail:"每个玩家进入游戏世界的第一个成就，标志着你作为独立个体的诞生。从这一刻起，你的每一步选择都将被记录。"},
+
+  { id:2, title:"难道我是天才？", desc:"考试获得过高分", rate:72, category:"学业", rarity:"common",
+    icon:"M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z",
+    detail:"在某个关键时刻，你展现出了超越常人的学习能力。也许只是一次考试，但那一刻的自信，至今难忘。" },
+
+  { id:3, title:"学有所成", desc:"成功通过高等教育，拿到大学毕业证书。", rate:38, category:"学业", rarity:"rare",
+    icon:"M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z",
+    detail:"经过多年的苦读与坚持，你终于拿到了那张纸。它不仅是学历证明，更是青春岁月里最扎实的注脚。" },
+
+  { id:4, title:"驾照猎人", desc:"通过驾考专属副本，解锁机动车驾驶证。", rate:53, category:"技能", rarity:"common",
+    icon:"M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z",
+    detail:"科目一、科目二、科目三、科目四……每一个关卡都是对耐心和技术的考验。终于，你可以合法上路了。" },
+
+  { id:5, title:"经济断奶", desc:"解锁「经济独立」被动，不再依赖原生家庭补给。", rate:27, category:"成长", rarity:"epic",
+    icon:"M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z",
+    detail:"第一次用自己的工资支付所有账单的那一刻，你真正理解了「成年」的含义。自由从来不是免费的。" },
+
+  { id:6, title:"厨艺觉醒", desc:"不靠外卖，独立做出一桌像样家常菜。", rate:62, category:"生活", rarity:"common",
+    icon:"M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z",
+    detail:"当厨房里的油烟味取代了外卖包装袋的味道，你发现自己其实可以照顾好自己——而且味道还不错。" },
+
+  { id:7, title:"这样才卷？", desc:"非上课时间一天学习超过10个小时", rate:18.6, category:"学业", rarity:"epic",
+    icon:"M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z",
+    detail:"图书馆闭馆音乐响起时，你才发现自己已经在这里待了一整天。这种近乎自虐的努力，是青春最极致的燃烧。" },
+
+  { id:8, title:"初恋支线", desc:"触发人生第一次心动恋爱专属剧情", rate:71, category:"情感", rarity:"common",
+    icon:"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+    detail:"心跳加速、手心出汗、反复查看手机消息……初恋的感觉像一场突如其来的高烧，烧退之后，你会永远记得那种温度。" },
+
+  { id:9, title:"空想行动派", desc:"想法众多始终迈不出动手那步", rate:60.7, category:"性格", rarity:"common",
+    icon:"M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z",
+    detail:"你的收藏夹里躺着一百个计划，书架上摆着从未翻开的技能书。大脑是世界上最忙碌的器官——可惜只在想的时候。" },
+
+  { id:10, title:"亲密羁绊", desc:"完成婚姻系统绑定，缔结永久伴侣关系。", rate:35, category:"情感", rarity:"rare",
+    icon:"M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.01 2.01 0 0018.06 6.5h-4.12c-.8 0-1.54.5-1.85 1.26L9.5 16H12v6h8zM4 19V5h3V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h4v-2H4z",
+    detail:"两个人决定把彼此写进未来。这不仅是法律上的契约，更是两个灵魂之间最深层的信任交付。" },
+
+  { id:11, title:"子嗣DLC", desc:"解锁下一代新角色，开启支线高难副本。", rate:32, category:"家庭", rarity:"rare",
+    icon:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+    detail:"一个新的小生命来到这个世界，而你是这个生命的创造者和守护者。从此，你有了最柔软的软肋，也有了最坚硬的铠甲。" },
+
+  { id:12, title:"海外打卡", desc:"拥有一次出国旅行的经历", rate:11, category:"旅行", rarity:"epic",
+    icon:"M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+    detail:"护照上第一个出入境印章，异国街头的陌生语言，时差带来的眩晕感——世界突然变得很大，而你正在其中。" },
+
+  { id:13, title:"通宵达人", desc:"凌晨3点仍保持在线，突破生理极限", rate:93, category:"生活", rarity:"common",
+    icon:"M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z",
+    detail:"凌晨三点，城市沉入梦乡，只有你和屏幕的光还亮着。你知道明天会后悔，但现在停不下来——这就是通宵的魅力。" },
+
+  { id:14, title:"全款置业", desc:"无贷款独立购置房产。", rate:4, category:"财富", rarity:"legendary",
+    icon:"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+    detail:"在这个房价飞涨的时代，全款买房几乎是一个传说级的存在。如果你做到了，恭喜——你已经是真正的传奇玩家了。" },
+
+  { id:15, title:"拖延症", desc:"事情总等到截止日期当天，极限熬夜通关", rate:88, category:"性格", rarity:"common",
+    icon:"M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z",
+    detail:"DDL（截止日期）是第一生产力。你在最后两小时爆发出的效率，足以抵消过去一周的摸鱼。这是天赋，不是缺点。" },
+
+  { id:16, title:"月光战神", desc:"每月工资按时清零，存款永远归于零", rate:82, category:"财富", rarity:"common",
+    icon:"M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z",
+    detail:"钱就像手中的沙子，攥得越紧流得越快。你不是不会存钱，只是每一笔支出在当时看来都那么合理……" },
+
+  { id:17, title:"外卖至尊VIP", desc:"连续一周三餐靠外卖续命，零下厨", rate:78, category:"生活", rarity:"common",
+    icon:"M19 7h-3V6a4 4 0 00-8 0v1H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2zm-9-1a2 2 0 014 0v1h-4V6z",
+    detail:"外卖小哥已经熟悉了你家楼道的声控灯，连小区保安都认识你了。这一周的厨具落灰程度，堪比考古现场。" },
+
+  { id:18, title:"长期单身常驻", desc:"成年后连续单身4年+，从未开启恋爱支线", rate:37, category:"情感", rarity:"rare",
+    icon:"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+    detail:"单身久了，你会发现一个人吃饭旅行看书听歌也挺好的……大概吧。至少不用向任何人汇报行踪。" },
+
+  { id:19, title:"异乡打工人", desc:"背井离乡在外打拼，一年回家不超过2次", rate:43, category:"成长", rarity:"common",
+    icon:"M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z M18 8h-2l-5 6v-6H9v10h2l5-6v6h2z",
+    detail:"出租屋里的泡面味、深夜的加班灯光、视频通话里父母苍老的面容——每一个异乡人都在用距离换未来。" },
+
+  { id:20, title:"零负债人生", desc:"无房贷、车贷、网贷，真正无债一身轻", rate:9, category:"财富", rarity:"epic",
+    icon:"M4 10v7h3v-7H4zm6 0v7h3v-7h-3zm6 0v7h3v-7h-3zm6 0v7h3v-7h-3zM2 22h19v-3H2v3z",
+    detail:"在这个全民负债的时代，「零负债」比中彩票还罕见。没有每月还款日提醒的自由，是金钱能买到的最大奢侈品之一。" },
+
+  { id:21, title:"初心未改", desc:"成年后依然保持少年时的热爱", rate:55, category:"成长", rarity:"common",
+    icon:"M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
+    detail:"十年过去了，你还在做小时候喜欢的事。画画、写作、编程、运动……那些让你眼睛发光的东西，从来没有真正离开过你。" },
+
+  { id:22, title:"真心羁绊", desc:"拥有相识10年以上可托完全信任的挚友", rate:13, category:"社交", rarity:"epic",
+    icon:"M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z",
+    detail:"十年以上的友谊，意味着你们见过彼此最狼狈的样子却依然选择留在身边。这样的朋友，一只手就数得过来。" },
+
+  { id:23, title:"自律传说", desc:"长期保持早起+规律健身+稳定心态", rate:7, category:"成长", rarity:"legendary",
+    icon:"M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22 14.86 20.57 17 22.29 18.43 20.57 19.71 18.43z",
+    detail:"早起、健身、冥想、阅读——你把这些变成了不需要意志力的日常习惯。自律不是痛苦，而是最高级的自由。" },
+
+  { id:24, title:"安装语言包DLC", desc:"掌握一门外语以外的语言", rate:9.3, category:"技能", rarity:"epic",
+    icon:"M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z",
+    detail:"除了母语和英语之外，你还掌握了第三种语言。这意味着你拥有了第三种思维方式和第三种看世界的视角。" },
+
+  { id:25, title:"首次远行", desc:"第一次独自离开家乡，前往陌生城市", rate:85, category:"旅行", rarity:"common",
+    icon:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM4 12c0-4.41 3.59-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9A7.94 7.94 0 014 12zm8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1A7.94 7.94 0 0120 12c0 4.41-3.59 8-8 8z",
+    detail:"拖着行李箱站在陌生的街头，手机导航是你唯一的依靠。那一刻的慌张和兴奋交织，就是成长的起点。" },
+
+  { id:26, title:"我停不下来", desc:"连续8小时不间断刷视频，全程不离屏幕", rate:32, category:"生活", rarity:"common",
+    icon:"M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z",
+    detail:"「再看一个就去睡」——这句话你已经对自己说了三十七遍。算法比你更了解你自己，这才是最可怕的。" },
+
+  { id:27, title:"人形闹钟", desc:"超过24小时不睡觉", rate:16.7, category:"生活", rarity:"rare",
+    icon:"M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z",
+    detail:"太阳升起又落下，你的身体已经在抗议，但精神依然亢奋。24小时不眠——你挑战了人类生理的边界线。" },
+
+  { id:28, title:"资深玩家", desc:"单款游戏游玩总时长突破1000小时", rate:23.2, category:"娱乐", rarity:"rare",
+    icon:"M15 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h9v5h3v9zM8 15v-3h4v-2H8V7l5 4-5 4z",
+    detail:"1000小时——相当于整整41天不吃不喝只玩这款游戏。这不是沉迷，这是一段用时间浇灌出来的热爱。" },
+
+  { id:29, title:"故人走散", desc:"和年少最好的朋友，慢慢淡出彼此生活", rate:75, category:"社交", rarity:"common",
+    icon:"M16.5 9c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5S18 11.33 18 10.5 17.33 9 16.5 9zm-9 0c-.83 0-1.5.67-1.5 1.5S6.67 12 7.5 12 9 11.33 9 10.5 8.33 9 7.5 9z M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.29.02-.58.05-.86 2.36-1.05 4.23-2.98 5.21-5.37C11.07 8.33 14.05 10 17.42 10c.78 0 1.53-.09 2.25-.26.21.71.33 1.47.33 2.26 0 4.41-3.59 8-8 8z",
+    detail:"你们曾经无话不谈，后来变成节日群发祝福，再后来连朋友圈点赞都少了。走散不需要轰轰烈烈，只需要时间和沉默。" },
+
+  { id:30, title:"第一份工", desc:"拥有人生第一份全职正职工作", rate:71, category:"职业", rarity:"common",
+    icon:"M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.1-.89-2-2-2zm-6 0h-4V4h4v2z",
+    detail:"收到第一条工资短信的那一刻，所有的辛苦都值了。虽然钱不多，但那是你第一次完全靠自己赚到的钱。" },
+
+  { id:31, title:"遗憾离场", desc:"认真爱过一个人，最终没能走到最后", rate:61, category:"情感", rarity:"common",
+    icon:"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+    detail:"有些人注定只能陪你走一段路。分开时的撕心裂肺，多年后会变成一句淡淡的「那时候真傻」。遗憾也是一种成长。" },
+
+  { id:32, title:"守住热爱", desc:"坚持一件爱好5年以上从未放弃", rate:13, category:"成长", rarity:"epic",
+    icon:"M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
+    detail:"五年了，你还在弹琴/画画/跑步/写作。周围的人换了一个又一个，但这件事一直陪着你——这就是热爱的力量。" },
+
+  { id:33, title:"独处常态", desc:"习惯一人吃饭出行逛街，享受独处生活", rate:43, category:"生活", rarity:"common",
+    icon:"M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+    detail:"一个人吃火锅、一个人看电影、一个人去旅行——你发现独处并不可怕，反而是一种难得的自由和自在。" },
+
+  { id:34, title:"说走就走", desc:"临时起意，即兴长途旅行", rate:21.7, category:"旅行", rarity:"rare",
+    icon:"M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+    detail:"周五晚上心血来潮买了张票，周六就已经在另一个城市的街头了。没有攻略、没有计划，只有出发的冲动。" },
+
+  { id:35, title:"自我救赎", desc:"低谷期独自自我调节，不靠他人走出阴霾", rate:67, category:"成长", rarity:"common",
+    icon:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+    detail:"最难熬的那段时间，你一个人扛过来了。没有人知道你经历了什么，但你清楚——你比想象中更强大。" },
+
+  { id:36, title:"双向钟情", desc:"和心爱之人表白，结果对方也喜欢你", rate:63, category:"情感", rarity:"common",
+    icon:"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+    detail:"世界上最美好的事情莫过于此——你喜欢的那个人，刚好也在喜欢你。双向奔赴的爱情，值得用一生去珍藏。" },
+
+  { id:37, title:"岁岁平安", desc:"一生无重大波折灾难，生活安稳顺遂", rate:78, category:"生活", rarity:"common",
+    icon:"M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z",
+    detail:"「平安」两个字听起来普通，却是最大的奢侈。如果到目前为止你的生活平稳顺遂，请好好珍惜——这就是最好的福气。" },
+
+  { id:38, title:"财富自由", desc:"收入宽裕，不必为生计钱财发愁", rate:5.2, category:"财富", rarity:"legendary",
+    icon:"M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z",
+    detail:"财务自由不只是数字游戏，更是选择权的自由。当你不再需要为钱做不想做的事时，你就真正自由了。" },
+
+  { id:39, title:"乐坛赴约", desc:"亲临现场观看线下演唱会", rate:18.6, category:"娱乐", rarity:"rare",
+    icon:"M12 3v10.55c-.59-.34-1.27-.55-2-.55C7.79 13 6 14.79 6 17s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z",
+    detail:"全场大合唱的那一刻，你和几万人一起喊出那句歌词。耳机里听一百遍，不如现场一次的震撼。" },
+
+  { id:40, title:"观影达人", desc:"一年累计观看电影超30部", rate:23.5, category:"娱乐", rarity:"rare",
+    icon:"M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z",
+    detail:"一年30部电影，平均每12天一部。你不只是在消磨时间，而是在通过银幕体验上百种不同的人生。" },
+
+  { id:41, title:"无声的陪伴", desc:"养宠物超过5年，朝夕相伴", rate:29.3, category:"生活", rarity:"rare",
+    icon:"M4.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0zM9 5.5m-2.5 0a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0zM15 5.5m-2.5 0a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0zM19.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0zM17.34 14.86c-.87-1.02-1.84-1.86-2.84-2.58-.97.7-2.07 1.1-3.25 1.1-1.2 0-2.3-.41-3.28-1.13-1 .73-1.97 1.59-2.84 2.62C5.37 16.89 5 18.3 5 19.5c0 1.38 1.12 2.5 2.5 2.5h11c1.38 0 2.5-1.12 2.5-2.5 0-1.2-.37-2.61-1.13-3.64z",
+    detail:"五年，对于人类来说不长，但对于猫狗来说几乎是半辈子。谢谢你成为它/它的全世界。" },
+
+  { id:42, title:"山野露营", desc:"体验户外野外露营过夜", rate:10.3, category:"旅行", rarity:"epic",
+    icon:"M18 4h-1V2h-2v2H9V2H7v2H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H6V9h12v11zM8 11h2v2H8zm0 4h2v2H8zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z",
+    detail:"帐篷外的虫鸣声，头顶的满天星斗，清晨第一缕阳光穿透帐篷照在脸上——城市之外的夜晚，有着不一样的浪漫。" },
+
+  { id:43, title:"安装乐器DLC", desc:"掌握一种乐器", rate:11.3, category:"技能", rarity:"epic",
+    icon:"M12 3v10.55c-.59-.34-1.27-.55-2-.55C7.79 13 6 14.79 6 17s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z",
+    detail:"当你第一次完整弹出一首曲子的瞬间，那种成就感无可替代。乐器是你和世界之间的另一种语言。" },
+
+  { id:44, title:"自驾游历", desc:"拥有一次自驾出行旅游的经历", rate:35.4, category:"旅行", rarity:"common",
+    icon:"M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z",
+    detail:"握住方向盘，油门踩下，窗外的风景飞速后退。自驾的意义不在目的地，而在路上那段完全属于你的自由时光。" },
+
+  { id:45, title:"巅峰登临", desc:"徒步登顶高山观景", rate:43.5, category:"旅行", rarity:"common",
+    icon:"M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z",
+    detail:"站在山顶俯瞰的那一刻，所有的疲惫都烟消云散。原来世界真的可以这么广阔，而你真的可以站这么高。" },
+
+  { id:46, title:"追剧达人", desc:"完整追完10部长篇剧集", rate:38.2, category:"娱乐", rarity:"common",
+    icon:"M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z",
+    detail:"10部剧，几百个小时的故事。你笑过哭过骂过熬夜过——这些虚构的人生片段，构成了你真实的情感记忆。" },
+
+  { id:47, title:"徒步旅人", desc:"完成连续三天的长距离徒步旅程", rate:8.7, category:"旅行", rarity:"epic",
+    icon:"M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z",
+    detail:"三天，几十公里，双脚磨出水泡也不停下。在路上你会发现，人的潜力远远超出自己的想象。" },
+
+  { id:48, title:"误闯新世界", desc:"本来只想刷短视频结果学到了新技能", rate:65.3, category:"技能", rarity:"common",
+    icon:"M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z",
+    detail:"本来只想刷五分钟短视频，结果三个小时后你学会了做一道菜/修好了水龙头/搞懂了一个概念。意外收获往往来自最不经意的时刻。" },
+
+  { id:49, title:"泪失禁体质", desc:"看了电影或小说忍不住流泪", rate:35.3, category:"性格", rarity:"common",
+    icon:"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+    detail:"明明是个大老爷们/女汉子，却被一部电影弄得泪流满面。这不丢人——说明你还有感受美好与悲伤的能力。" },
+
+  { id:50, title:"爱你老妈明天见", desc:"给妈妈准备一份礼物和一束鲜花", rate:52.3, category:"家庭", rarity:"common",
+    icon:"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+    detail:"妈妈嘴上说着「别乱花钱」，接过花束时眼角却泛起了泪光。有些爱不需要说出口，但一定要表达出来。" },
+
+  { id:51, title:"方言包DLC", desc:"熟练掌握2种及以上地方方言", rate:18.3, category:"技能", rarity:"rare",
+    icon:"M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z",
+    detail:"普通话让你走遍全国，方言让你扎根一方。每种方言背后都是一片土地的文化密码和一群人的情感记忆。" },
+
+  { id:52, title:"公共交通卡常客", desc:"常年依靠地铁公交日常出行", rate:59.2, category:"生活", rarity:"common",
+    icon:"M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z",
+    detail:"你对这座城市的每条地铁线路如数家珍，知道哪节车厢离换乘最近、哪个站的出口离公司最近——你就是活地图。" },
+
+  { id:53, title:"极简社交者", desc:"只维持3个以内核心好友", rate:28.4, category:"社交", rarity:"rare",
+    icon:"M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z",
+    detail:"通讯录里躺着几千人，但真正能在深夜打电话的不过两三个。你选择了质量而非数量——这是一种清醒。" },
+
+  { id:54, title:"心灵手巧", desc:"独立完成手工DIY/制作成品", rate:22.1, category:"技能", rarity:"rare",
+    icon:"M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z",
+    detail:"从原材料到成品，全程亲手完成。看着手里的东西从无到有，那种创造的满足感是任何消费都无法替代的。" },
+
+  { id:55, title:"落日收藏家", desc:"特意去多地拍摄日落美景", rate:7.8, category:"兴趣", rarity:"epic",
+    icon:"M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z",
+    detail:"你追过山顶的日落、海边的日落、城市天台上的日落。每一次落日都不一样，但每一场都美得让人屏息。" },
+
+  { id:56, title:"不眠者", desc:"平均每日睡眠时间少于7小时", rate:36.2, category:"生活", rarity:"common",
+    icon:"M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z",
+    detail:"每天只睡五六个小时，咖啡是你的续命药水。你总觉得时间不够用——有太多事想做，太多梦没追完。" },
+
+  { id:57, title:"瞌睡者", desc:"日常睡眠经常超过10小时", rate:19.3, category:"生活", rarity:"rare",
+    icon:"M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z",
+    detail:"睡够十小时对你来说是基本操作。有人说你懒，但你知道——好的睡眠是最好的美容和充电方式。" },
+
+  { id:58, title:"千里赴约", desc:"跨越千里见面，奔赴重要之人", rate:11.6, category:"情感", rarity:"epic",
+    icon:"M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+    detail:"坐了几十个小时的车/飞机，只为见那个人一面。距离从来不是问题——重要的是，那个人值得你奔赴。" },
+
+  { id:59, title:"垂钓闲人", desc:"每周户外垂钓享受安静时光", rate:7.2, category:"兴趣", rarity:"epic",
+    icon:"M21 6h-2v9H6v2c0 .55.45 1 1 1h11l1 1V7c0-.55-.45-1-1-1zm-4 3H9V7h8v2z",
+    detail:"一根竿、一把椅、一片水，坐上一整天也不嫌烦。钓鱼钓的不是鱼，是那份难得的心无杂念的宁静。" },
+
+  { id:60, title:"电玩收藏家", desc:"入手多款游戏主机设备", rate:5.9, category:"娱乐", rarity:"legendary",
+    icon:"M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S19.17 9 20 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z",
+    detail:"PS、Switch、Xbox、Steam Deck……你的游戏柜比很多人的衣柜还丰富。这不是浪费，这是对一个领域的真爱。" }
+];
+
+// ── State ──
+let unlockedSet = new Set(
+  JSON.parse(localStorage.getItem('earthOL_unlocked') || '[]')
+);
+let currentCategory = 'all';
+let searchQuery = '';
+let sortAsc = true;
+
+const categories = [...new Set(achievements.map(a => a.category))];
+
+function saveUnlockedState() {
+  localStorage.setItem('earthOL_unlocked', JSON.stringify([...unlockedSet]));
+}
+
+function getRarityInfo(r) {
+  return { common:'普通', rare:'稀有', epic:'史诗', legendary:'传说' }[r] || '';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Stats ──
+function initStats() {
+  const total = achievements.length;
+  const unlocked = unlockedSet.size;
+  const legendaryCount = achievements.filter(a => a.rarity === 'legendary').length;
+  const legendUnlocked = achievements.filter(a => a.rarity === 'legendary' && unlockedSet.has(a.id)).length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-item"><div class="stat-number">${total}</div><div class="stat-label">成就总数</div></div>
+    <div class="stat-item"><div class="stat-number">${unlocked}</div><div class="stat-label">已解锁</div></div>
+    <div class="stat-item"><div class="stat-number">${legendUnlocked}/${legendaryCount}</div><div class="stat-label">传说成就</div></div>
+  `;
+}
+
+// ── Category tabs ──
+function initCategoryTabs() {
+  const c = document.getElementById('categoryTabs');
+  let h = `<button class="cat-tab ${currentCategory==='all'?'active':''}" data-cat="all">全部</button>`;
+  categories.forEach(cat => {
+    h += `<button class="cat-tab ${currentCategory===cat?'active':''}" data-cat="${cat}">${cat}</button>`;
+  });
+  c.innerHTML = h;
+  c.querySelectorAll('.cat-tab').forEach(btn => {
+    btn.onclick = () => {
+      currentCategory = btn.dataset.cat;
+      c.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderGrid();
+    };
+  });
+}
+
+// ── Sort toggle ──
+function toggleSort() {
+  sortAsc = !sortAsc;
+  const btn = document.getElementById('sortBtn');
+  btn.classList.toggle('desc', !sortAsc);
+  btn.classList.toggle('active', true);
+  renderGrid();
+}
+
+// ── Render ──
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+
+  let filtered = achievements.filter(a => {
+    if (currentCategory !== 'all' && a.category !== currentCategory) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      if (!a.title.toLowerCase().includes(q) && !a.desc.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+
+  filtered.sort((a, b) => sortAsc ? a.rate - b.rate : b.rate - a.rate);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const tierOrder = ['legendary','epic','rare','common'];
+  const grouped = {};
+  filtered.forEach(a => {
+    if (!grouped[a.rarity]) grouped[a.rarity] = [];
+    grouped[a.rarity].push(a);
+  });
+
+  let html = '';
+  tierOrder.forEach(tier => {
+    if (!grouped[tier] || grouped[tier].length === 0) return;
+    const labelMap = {
+      legendary: '★ 传说难度 — 全服仅少数玩家达成',
+      epic: '☆ 史诗难度 — 极难达成',
+      rare: '· 稀有难度 — 少数玩家拥有',
+      common: '· 普通难度 — 多数玩家可达成'
+    };
+    html += `<div style="grid-column:1/-1;"><div class="difficulty-label ${tier}">${labelMap[tier]}<span class="line"></span></div></div>`;
+    grouped[tier].forEach((a, i) => {
+      const isUnlocked = unlockedSet.has(a.id);
+      html += `
+      <div class="achievement-card ${isUnlocked?'unlocked':'locked'}"
+           style="animation-delay:${i*0.05}s"
+           data-id="${a.id}"
+           onclick="openModal(${a.id})">
+        <div class="card-top">
+          <div class="icon-box">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="${a.icon}"/></svg>
+            ${isUnlocked ? '<span class="sparkles">✦</span>' : ''}
+          </div>
+          <div class="card-info">
+            <div class="card-title">${a.title}</div>
+            <div class="card-desc">${a.desc}</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="rate-bar-container">
+            <div class="rate-bar-bg"><div class="rate-bar-fill" style="width:${a.rate}%"></div></div>
+            <div class="rate-text"><span>${a.rate}%</span> 玩家拥有</div>
+          </div>
+          <span class="rarity-indicator rarity-${a.rarity}">${getRarityInfo(a.rarity)}</span>
+        </div>
+      </div>`;
+    });
+  });
+
+  grid.innerHTML = html;
+
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.rate-bar-fill').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0%';
+      requestAnimationFrame(() => { bar.style.width = w; });
+    });
+  });
+}
+
+// ── Modal ──
+function openModal(id) {
+  const a = achievements.find(x => x.id === id);
+  if (!a) return;
+  const isUnlocked = unlockedSet.has(a.id);
+
+  document.getElementById('modalContent').innerHTML = `
+    <div style="text-align:center;">
+      <div class="modal-cat-tag">${a.category} · ${getRarityInfo(a.rarity)}</div>
+    </div>
+    <div class="modal-icon-wrap">
+      <div class="modal-icon ${isUnlocked?'':'locked-icon'}">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="${a.icon}"/></svg>
+      </div>
+    </div>
+    <div class="modal-title ${isUnlocked?'':'locked-title'}">${a.title}</div>
+    <div class="modal-desc ${isUnlocked?'':'locked-desc'}">${a.desc}</div>
+    <div class="modal-stats">
+      <div class="modal-stat">
+        <div class="modal-stat-num ${isUnlocked?'':'locked-stat'}">${a.rate}%</div>
+        <div class="modal-stat-label">全球达成率</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-num ${isUnlocked?'':'locked-stat'}">#${a.id}</div>
+        <div class="modal-stat-label">成就编号</div>
+      </div>
+    </div>
+    <div class="modal-story">
+      <div class="modal-story-label">成就故事</div>
+      <div class="modal-story-text">${a.detail || '这是一个关于成长的成就，等待你去书写属于你的故事。'}</div>
+    </div>
+    <button class="modal-toggle-btn ${isUnlocked?'':'locked-btn'}" onclick="toggleUnlock(${a.id});closeModal();renderGrid();initStats();">
+      ${isUnlocked ? '🔒 标记为未解锁' : '✨ 解锁此成就'}
+    </button>
+  `;
+  document.getElementById('modalBackdrop').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('show');
+}
+
+function toggleUnlock(id) {
+  if (unlockedSet.has(id)) unlockedSet.delete(id);
+  else unlockedSet.add(id);
+  saveUnlockedState();
+}
+
+// ── Export / Import / Reset ──
+function exportProgress() {
+  const data = {
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    unlocked: [...unlockedSet]
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `地球Online成就存档_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ 存档已导出！可发送给朋友导入他们的页面');
+}
+
+function importProgress(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.unlocked || !Array.isArray(data.unlocked)) throw new Error('无效格式');
+      unlockedSet = new Set(data.unlocked);
+      saveUnlockedState();
+      renderGrid();
+      initStats();
+      showToast(`✅ 已导入 ${unlockedSet.size} 个成就进度！`);
+    } catch (err) {
+      showToast('❌ 导入失败：文件格式不正确');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function resetProgress() {
+  if (!confirm('确定要清除所有本地存档，恢复初始未解锁状态吗？\n\n此操作只会清除当前设备的存档，不影响他人。')) return;
+  unlockedSet.clear();
+  saveUnlockedState();
+  renderGrid();
+  initStats();
+  showToast('🔄 进度已重置！页面已恢复初始状态。');
+}
+
+// ── Search ──
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderGrid();
+});
+
+// ESC to close modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ── Init ──
+initStats();
+initCategoryTabs();
+renderGrid();
+</script>
+</body>
+</html>
