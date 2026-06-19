@@ -7,7 +7,6 @@
 <meta name="description" content="地球Online人生成就系统 - 把人生当作一款MMORPG，记录你的每一个成就">
 <meta name="theme-color" content="#08080d" id="themeColorMeta">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 /* ── Theme Variables ── */
 :root {
@@ -1350,15 +1349,29 @@ function exportProgress() {
 }
 
 // ── Export Image (一图流) ──
+let html2canvasLoaded = false;
+async function loadHtml2Canvas() {
+  if (window.html2canvas) { html2canvasLoaded = true; return true; }
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    script.onload = () => { html2canvasLoaded = true; resolve(true); };
+    script.onerror = () => reject(new Error('加载 html2canvas 失败'));
+    document.head.appendChild(script);
+  });
+}
+
 async function exportImage() {
   const btn = event.target.closest('button');
   const originalText = btn.innerHTML;
-  btn.innerHTML = '&#8987; 生成中...';
+  btn.innerHTML = '&#8987; 加载中...';
   btn.disabled = true;
 
-  showToast('正在生成成就卡片图片，请稍候...');
-
   try {
+    showToast('正在准备导出模块，请稍候...');
+    await loadHtml2Canvas();
+    showToast('正在生成成就卡片图片，请稍候...');
+
     // Create a temporary container for the image
     const imgContainer = document.createElement('div');
     imgContainer.style.cssText = `
