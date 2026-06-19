@@ -10,561 +10,1418 @@
 <style>
 /* ── Theme Variables ── */
 :root {
-  --bg-primary: #08080d; --bg-secondary: #111116;
-  --bg-card-locked: #0c0c10; --bg-modal: #14141c;
-  --bg-stat: rgba(191,154,38,0.04); --bg-input: rgba(255,255,255,0.03);
-  --bg-toolbar-btn: rgba(255,255,255,0.03); --bg-toast: #1a1a24;
-  --text-primary: #e8e6e3; --text-secondary: #999; --text-muted: #666;
-  --text-dim: #555; --text-dimmer: #444;
-  --accent: #bf9a26; --accent-light: #d4a82a;
-  --accent-bg: rgba(191,154,38,0.08); --accent-border: rgba(191,154,38,0.2);
-  --border-default: rgba(255,255,255,0.06); --border-hover: rgba(255,255,255,0.1);
+  /* Dark theme (default) */
+  --bg-primary: #08080d;
+  --bg-secondary: #111116;
+  --bg-card-locked: #0c0c10;
+  --bg-card-unlocked: linear-gradient(145deg, #1a170a 0%, #13110a 100%);
+  --bg-modal: #14141c;
+  --bg-stat: rgba(191,154,38,0.04);
+  --bg-input: rgba(255,255,255,0.03);
+  --bg-toolbar-btn: rgba(255,255,255,0.03);
+  --bg-toast: #1a1a24;
+  
+  --text-primary: #e8e6e3;
+  --text-secondary: #999;
+  --text-muted: #666;
+  --text-dim: #555;
+  --text-dimmer: #444;
+  
+  --accent: #bf9a26;
+  --accent-light: #d4a82a;
+  --accent-bg: rgba(191,154,38,0.08);
+  --accent-border: rgba(191,154,38,0.2);
+  
+  --border-default: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.1);
   --border-input: rgba(255,255,255,0.08);
-  --rate-bar-bg: rgba(255,255,255,0.04); --scrollbar-bg: rgba(255,255,255,0.05);
+  
+  --icon-locked-stroke: #333;
+  --icon-unlocked-stroke: #d4a82a;
+  
+  --rate-bar-bg: rgba(255,255,255,0.04);
+  --rate-bar-locked: linear-gradient(90deg, #222, #333);
+  --rate-bar-unlocked: linear-gradient(90deg, #8B6914, #d4a82a);
+  
+  --scrollbar-bg: rgba(255,255,255,0.05);
   --scrollbar-thumb: rgba(255,255,255,0.1);
 }
+
+/* Light theme */
 [data-theme="light"] {
-  --bg-primary: #f5f5f0; --bg-secondary: #ffffff; --bg-card-locked: #e8e8e3;
-  --bg-modal: #ffffff; --bg-stat: rgba(191,154,38,0.08);
-  --bg-input: rgba(0,0,0,0.03); --bg-toolbar-btn: rgba(0,0,0,0.03); --bg-toast: #ffffff;
-  --text-primary: #1a1a1a; --text-secondary: #666; --text-muted: #888;
-  --text-dim: #aaa; --text-dimmer: #bbb;
-  --accent: #8B6914; --accent-bg: rgba(139,105,20,0.08); --accent-border: rgba(139,105,20,0.2);
-  --border-default: rgba(0,0,0,0.08); --border-hover: rgba(0,0,0,0.12); --border-input: rgba(0,0,0,0.08);
-  --scrollbar-bg: rgba(0,0,0,0.05); --scrollbar-thumb: rgba(0,0,0,0.15);
+  --bg-primary: #f5f5f0;
+  --bg-secondary: #ffffff;
+  --bg-card-locked: #e8e8e3;
+  --bg-card-unlocked: linear-gradient(145deg, #fffbe6 0%, #fff8e1 100%);
+  --bg-modal: #ffffff;
+  --bg-stat: rgba(191,154,38,0.08);
+  --bg-input: rgba(0,0,0,0.03);
+  --bg-toolbar-btn: rgba(0,0,0,0.03);
+  --bg-toast: #ffffff;
+  
+  --text-primary: #1a1a1a;
+  --text-secondary: #666;
+  --text-muted: #888;
+  --text-dim: #aaa;
+  --text-dimmer: #bbb;
+  
+  --accent: #8B6914;
+  --accent-light: #d4a82a;
+  --accent-bg: rgba(139,105,20,0.08);
+  --accent-border: rgba(139,105,20,0.2);
+  
+  --border-default: rgba(0,0,0,0.08);
+  --border-hover: rgba(0,0,0,0.12);
+  --border-input: rgba(0,0,0,0.08);
+  
+  --icon-locked-stroke: #ccc;
+  --icon-unlocked-stroke: #8B6914;
+  
+  --rate-bar-bg: rgba(0,0,0,0.05);
+  --rate-bar-locked: linear-gradient(90deg, #ddd, #ccc);
+  --rate-bar-unlocked: linear-gradient(90deg, #bf9a26, #d4a82a);
+  
+  --scrollbar-bg: rgba(0,0,0,0.05);
+  --scrollbar-thumb: rgba(0,0,0,0.15);
 }
 
+/* ── Base Styles ── */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--bg-primary); color: var(--text-primary);
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  min-height: 100vh; line-height: 1.6; -webkit-font-smoothing: antialiased; transition: background .3s,color .3s; }
-.header { text-align:center; padding:48px 20px 20px; position:relative; overflow:hidden; }
-.header::before { content:''; position:absolute; top:-40%; left:50%; transform:translateX(-50%);
-  width:500px;height:500px;border-radius:50%;
-  background:radial-gradient(circle,rgba(191,154,38,.06)0%,transparent70%); pointer-events:none; }
-[data-theme="light"] .header::before { background:radial-gradient(circle,rgba(191,154,38,.1)0%,transparent70%); }
-.header h1 { font-size:34px;font-weight:700;color:var(--accent);letter-spacing:6px;
-  text-shadow:0 0 60px rgba(191,154,38,.2); position:relative; }
-.header .subtitle { margin-top:8px;font-size:13px;color:var(--text-dim);letter-spacing:3px; }
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s, color 0.3s;
+}
 
-.stats-bar { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; padding:16px 20px 28px; }
-.stat-item { background:var(--bg-stat); border:1px solid var(--accent-border); border-radius:12px;
-  padding:14px 26px; text-align:center; min-width:130px; transition:.3s; }
-.stat-item:hover { transform:translateY(-2px); border-color:rgba(191,154,38,.25); }
-.stat-number { font-size:26px;font-weight:700;color:var(--accent); }
-.stat-label { font-size:11px;color:var(--text-muted);margin-top:4px;letter-spacing:1px; }
+/* ── Header ── */
+.header {
+  text-align: center;
+  padding: 48px 20px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(191,154,38,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+[data-theme="light"] .header::before {
+  background: radial-gradient(circle, rgba(191,154,38,0.1) 0%, transparent 70%);
+}
+.header h1 {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 6px;
+  text-shadow: 0 0 60px rgba(191,154,38,0.2);
+  position: relative;
+}
+.header .subtitle {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+}
 
-.toolbar { max-width:960px;margin:0 auto 16px;padding:0 20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap; }
-.search-box { flex:1;min-width:200px;position:relative; }
-.search-box input { width:100%;padding:11px 14px 11px 40px;background:var(--bg-input);
-  border:1px solid var(--border-input);border-radius:10px;color:var(--text-primary);font-size:13px;
-  outline:none;transition:.3s; }
-.search-box input:focus { border-color:rgba(191,154,38,.4);background:rgba(191,154,38,.04); }
-.search-box input::placeholder{color:var(--text-dimmer)}
-.search-box .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-dimmer);font-size:15px;pointer-events:none}
-.toolbar-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.sort-btn,.action-btn{padding:9px 16px;background:var(--bg-toolbar-btn);border:1px solid var(--border-input);
-  border-radius:10px;color:var(--text-muted);font-size:12px;cursor:pointer;transition:.25s;
-  white-space:nowrap;display:flex;align-items:center;gap:6px}
-.sort-btn:hover,.action-btn:hover{border-color:var(--border-hover);color:var(--text-secondary)}
-.sort-btn.active{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)}
-.sort-btn .arrow{transition:transform .3s}.sort-btn.desc .arrow{transform:rotate(180deg)}
-.action-btn.danger{color:#e55;border-color:rgba(229,85,85,.2)}.action-btn.danger:hover{background:rgba(229,85,85,.08);color:#f77}
-.action-btn.export-btn:hover{border-color:var(--accent-border);color:var(--accent)}
+/* ── Stats ── */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px 20px 28px;
+}
+.stat-item {
+  background: var(--bg-stat);
+  border: 1px solid var(--accent-border);
+  border-radius: 12px;
+  padding: 14px 26px;
+  text-align: center;
+  min-width: 130px;
+  transition: all 0.3s;
+}
+.stat-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(191,154,38,0.25);
+}
+[data-theme="light"] .stat-item:hover {
+  border-color: rgba(139,105,20,0.25);
+}
+.stat-number {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
 
-.theme-toggle{width:38px;height:38px;border-radius:10px;background:var(--bg-toolbar-btn);border:1px solid var(--border-input);
-  color:var(--text-muted);font-size:18px;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center}
-.theme-toggle:hover{border-color:var(--border-hover);color:var(--accent);background:var(--accent-bg)}
+/* ── Toolbar ── */
+.toolbar {
+  max-width: 960px;
+  margin: 0 auto 16px;
+  padding: 0 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+.search-box input {
+  width: 100%;
+  padding: 11px 14px 11px 40px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.3s;
+}
+.search-box input:focus {
+  border-color: rgba(191,154,38,0.4);
+  background: rgba(191,154,38,0.04);
+}
+[data-theme="light"] .search-box input:focus {
+  border-color: rgba(139,105,20,0.4);
+  background: rgba(139,105,20,0.04);
+}
+.search-box input::placeholder { color: var(--text-dimmer); }
+.search-box .search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dimmer);
+  font-size: 15px;
+  pointer-events: none;
+}
+.toolbar-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.sort-btn, .action-btn {
+  padding: 9px 16px;
+  background: var(--bg-toolbar-btn);
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sort-btn:hover, .action-btn:hover { border-color: var(--border-hover); color: var(--text-secondary); }
+.sort-btn.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+.sort-btn .arrow { transition: transform 0.3s; }
+.sort-btn.desc .arrow { transform: rotate(180deg); }
+.action-btn.danger { color: #e55; border-color: rgba(229,85,85,0.2); }
+.action-btn.danger:hover { background: rgba(229,85,85,0.08); color: #f77; }
+.action-btn.export-btn:hover { border-color: var(--accent-border); color: var(--accent); }
 
-.difficulty-label{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:13px;font-weight:500;letter-spacing:1px}
-.difficulty-label .line{flex:1;height:1px}
-.difficulty-label.legendary{color:var(--accent)}.difficulty-label.legendary .line{background:linear-gradient(90deg,rgba(191,154,38,.3),transparent)}
-.difficulty-label.epic{color:#c084fc}.difficulty-label.epic .line{background:linear-gradient(90deg,rgba(168,85,247,.3),transparent)}
-.difficulty-label.rare{color:#60a5fa}.difficulty-label.rare .line{background:linear-gradient(90deg,rgba(59,130,246,.3),transparent)}
-.difficulty-label.common{color:var(--text-muted)}.difficulty-label.common .line{background:linear-gradient(90deg,rgba(150,150,150,.2),transparent)}
+/* ── Theme Toggle Button ── */
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--bg-toolbar-btn);
+  border: 1px solid var(--border-input);
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-toggle:hover {
+  border-color: var(--border-hover);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
 
-.category-tabs{max-width:960px;margin:0 auto 20px;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.cat-tab{padding:6px 14px;background:transparent;border:1px solid var(--border-default);border-radius:20px;color:var(--text-muted);font-size:11px;cursor:pointer;transition:.25s}
-.cat-tab:hover{color:var(--text-secondary);border-color:var(--border-hover)}.cat-tab.active{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)}
+/* ── Difficulty sections ── */
+.difficulty-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+.difficulty-label .line { flex: 1; height: 1px; }
+.difficulty-label.legendary { color: var(--accent); }
+.difficulty-label.legendary .line { background: linear-gradient(90deg, rgba(191,154,38,0.3), transparent); }
+.difficulty-label.epic { color: #c084fc; }
+.difficulty-label.epic .line { background: linear-gradient(90deg, rgba(168,85,247,0.3), transparent); }
+.difficulty-label.rare { color: #60a5fa; }
+.difficulty-label.rare .line { background: linear-gradient(90deg, rgba(59,130,246,0.3), transparent); }
+.difficulty-label.common { color: var(--text-muted); }
+.difficulty-label.common .line { background: linear-gradient(90deg, rgba(150,150,150,0.2), transparent); }
 
-.container{max-width:960px;margin:0 auto;padding:0 20px 60px}
-.achievement-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:14px}
+/* ── Category tabs ── */
+.category-tabs {
+  max-width: 960px;
+  margin: 0 auto 20px;
+  padding: 0 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cat-tab {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: 20px;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.cat-tab:hover { color: var(--text-secondary); border-color: var(--border-hover); }
+.cat-tab.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
 
-.achievement-card{background:var(--bg-secondary);border:1px solid var(--border-default);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .35s ease;position:relative;overflow:hidden;animation:cardIn .5s ease forwards;opacity:0;transform:translateY(10px)}
-@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
-.achievement-card.locked{background:var(--bg-card-locked);border-color:rgba(255,255,255,.04)}
-.achievement-card.locked .icon-box{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)}
-.achievement-card.locked .icon-svg{stroke:#333;opacity:.4}
-.achievement-card.locked .card-title{color:var(--text-dimmer)}.achievement-card.locked .card-desc{color:#333}
-.achievement-card.locked .rate-text{color:var(--text-dimmer)}
-.achievement-card.locked .rate-bar-bg{background:var(--rate-bar-bg)}
-.achievement-card.locked .rate-bar-fill{background:linear-gradient(90deg,#222,#333)}
-.achievement-card.locked .card-footer{border-top-color:rgba(255,255,255,.03)}
-.achievement-card.locked .rarity-indicator{opacity:.35}
-.achievement-card.locked:hover{border-color:var(--border-hover);background:#121218;transform:translateY(-2px)}
-.achievement-card.locked:hover .icon-svg{stroke:#555;opacity:.7}
-.achievement-card.locked:hover .card-title{color:#666}
-.achievement-card.unlocked{background:linear-gradient(145deg,#1a170a 0%,#13110a 100%);border-color:var(--accent-border);box-shadow:0 0 0 rgba(191,154,38,0),inset 0 0 30px rgba(191,154,38,.02)}
-.achievement-card.unlocked::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(191,154,38,.5),transparent)}
-[data-theme="light"] .achievement-card.unlocked::before{background:linear-gradient(90deg,transparent,rgba(139,105,20,.5),transparent)}
-.achievement-card.unlocked .icon-box{background:linear-gradient(135deg,rgba(191,154,38,.15),rgba(191,154,38,.04));border-color:rgba(191,154,38,.25)}
-.achievement-card.unlocked .icon-svg{stroke:#d4a82a;filter:drop-shadow(0 0 4px rgba(191,154,38,.3))}
-.achievement-card.unlocked .card-title{color:#f5e6a3}[data-theme="light"] .achievement-card.unlocked .card-title{color:#8B6914}
-.achievement-card.unlocked .card-desc{color:var(--text-secondary)}
-.achievement-card.unlocked .rate-bar-fill{background:linear-gradient(90deg,#8B6914,#d4a82a)}
-.achievement-card.unlocked:hover{border-color:rgba(191,154,38,.4);box-shadow:0 4px 24px rgba(0,0,0,.3),0 0 30px rgba(191,154,38,.06);transform:translateY(-3px)}
+/* ── Grid ── */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 14px;
+}
 
-.card-top{display:flex;align-items:flex-start;gap:14px}
-.icon-box{width:54px;height:54px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;transition:.35s}
-.icon-box .icon-svg{width:30px;height:30px;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:.35s}
-.icon-box .sparkles{position:absolute;top:-4px;right:-4px;font-size:10px;color:var(--accent-light);filter:drop-shadow(0 0 4px rgba(191,154,38,.6));animation:twinkle 2s ease infinite}
-@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.4}}
-.card-info{flex:1;min-width:0}
-.card-title{font-size:15px;font-weight:600;margin-bottom:5px;transition:color .35s}
-.card-desc{font-size:12.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--text-secondary);transition:color .35s}
-.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:11px;border-top:1px solid var(--border-default);transition:border-color .35s}
-.rate-bar-container{flex:1;margin-right:14px}
-.rate-bar-bg{height:4px;background:var(--rate-bar-bg);border-radius:3px;overflow:hidden}
-.rate-bar-fill{height:100%;border-radius:3px;transition:width .8s ease;width:0%}
-.rate-text{font-size:10.5px;margin-top:4px;transition:color .35s;color:var(--text-dim)}
+/* ── Card: LOCKED (grey/dark) ── */
+.achievement-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+  animation: cardIn 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+@keyframes cardIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.achievement-card.locked {
+  background: var(--bg-card-locked);
+  border-color: rgba(255,255,255,0.04);
+}
+[data-theme="light"] .achievement-card.locked {
+  border-color: rgba(0,0,0,0.04);
+}
+.achievement-card.locked .icon-box {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+}
+[data-theme="light"] .achievement-card.locked .icon-box {
+  background: rgba(0,0,0,0.02);
+  border-color: rgba(0,0,0,0.06);
+}
+.achievement-card.locked .icon-svg {
+  stroke: var(--icon-locked-stroke);
+  opacity: 0.4;
+}
+.achievement-card.locked .card-title { color: var(--text-title-locked); }
+.achievement-card.locked .card-desc { color: var(--text-desc-locked); }
+.achievement-card.locked .rate-text { color: var(--text-dimmer); }
+.achievement-card.locked .rate-text span { color: var(--text-dim); }
+.achievement-card.locked .rate-bar-bg { background: var(--rate-bar-bg); }
+.achievement-card.locked .rate-bar-fill {
+  background: var(--rate-bar-locked);
+}
+.achievement-card.locked .card-footer {
+  border-top-color: rgba(255,255,255,0.03);
+}
+[data-theme="light"] .achievement-card.locked .card-footer {
+  border-top-color: rgba(0,0,0,0.03);
+}
+.achievement-card.locked .rarity-indicator { opacity: 0.35; }
+.achievement-card.locked:hover {
+  border-color: var(--border-hover);
+  background: #121218;
+  transform: translateY(-2px);
+}
+[data-theme="light"] .achievement-card.locked:hover {
+  background: #eaeae5;
+}
+.achievement-card.locked:hover .icon-svg {
+  stroke: #555;
+  opacity: 0.7;
+}
+[data-theme="light"] .achievement-card.locked:hover .icon-svg {
+  stroke: #aaa;
+}
+.achievement-card.locked:hover .card-title { color: #666; }
+[data-theme="light"] .achievement-card.locked:hover .card-title { color: #888; }
 
-.rarity-indicator{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:5px;font-size:10.5px;font-weight:500;flex-shrink:0;transition:.35s}
-.rarity-common{background:rgba(120,120,120,.08);color:#666;border:1px solid rgba(120,120,120,.12)}
-.rarity-rare{background:rgba(59,130,246,.08);color:#5090e0;border:1px solid rgba(59,130,246,.15)}
-.rarity-epic{background:rgba(168,85,247,.08);color:#a86fe0;border:1px solid rgba(168,85,247,.15)}
-.rarity-legendary{background:rgba(191,154,38,.08);color:var(--accent);border:1px solid var(--accent-border)}
+/* ── Card: UNLOCKED (golden highlight) ── */
+.achievement-card.unlocked {
+  background: var(--bg-card-unlocked);
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 rgba(191,154,38,0), inset 0 0 30px rgba(191,154,38,0.02);
+}
+.achievement-card.unlocked::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(191,154,38,0.5), transparent);
+}
+[data-theme="light"] .achievement-card.unlocked::before {
+  background: linear-gradient(90deg, transparent, rgba(139,105,20,0.5), transparent);
+}
+.achievement-card.unlocked .icon-box {
+  background: linear-gradient(135deg, rgba(191,154,38,0.15) 0%, rgba(191,154,38,0.04) 100%);
+  border-color: rgba(191,154,38,0.25);
+}
+[data-theme="light"] .achievement-card.unlocked .icon-box {
+  background: linear-gradient(135deg, rgba(139,105,20,0.15) 0%, rgba(139,105,20,0.04) 100%);
+  border-color: rgba(139,105,20,0.25);
+}
+.achievement-card.unlocked .icon-svg {
+  stroke: var(--icon-unlocked-stroke);
+  filter: drop-shadow(0 0 4px rgba(191,154,38,0.3));
+}
+.achievement-card.unlocked .card-title { color: #f5e6a3; }
+[data-theme="light"] .achievement-card.unlocked .card-title { color: #8B6914; }
+.achievement-card.unlocked .card-desc { color: var(--text-secondary); }
+.achievement-card.unlocked .rate-bar-fill {
+  background: var(--rate-bar-unlocked);
+}
+.achievement-card.unlocked:hover {
+  border-color: rgba(191,154,38,0.4);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 30px rgba(191,154,38,0.06);
+  transform: translateY(-3px);
+}
+[data-theme="light"] .achievement-card.unlocked:hover {
+  border-color: rgba(139,105,20,0.4);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1), 0 0 30px rgba(139,105,20,0.06);
+}
 
-.empty-state{text-align:center;padding:80px 20px;color:var(--text-dimmer)}
-.empty-state .empty-icon{font-size:42px;margin-bottom:14px;opacity:.25}
-.footer-note{text-align:center;padding:24px 20px 40px;color:var(--text-dimmer);font-size:11px;letter-spacing:1px}
+/* ── Card layout ── */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.icon-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.35s;
+}
+.icon-box .icon-svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 0.35s;
+}
+.icon-box .sparkles {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 10px;
+  color: var(--accent-light);
+  filter: drop-shadow(0 0 4px rgba(191,154,38,0.6));
+  animation: twinkle 2s ease infinite;
+}
+@keyframes twinkle {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.card-info { flex: 1; min-width: 0; }
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  transition: color 0.35s;
+}
+.card-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.35s;
+  color: var(--text-secondary);
+}
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid var(--border-default);
+  transition: border-color 0.35s;
+}
+.rate-bar-container { flex: 1; margin-right: 14px; }
+.rate-bar-bg {
+  height: 4px;
+  background: var(--rate-bar-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.rate-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s ease;
+  width: 0%;
+}
+.rate-text {
+  font-size: 10.5px;
+  margin-top: 4px;
+  transition: color 0.35s;
+  color: var(--text-dim);
+}
 
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);justify-content:center;align-items:center;padding:20px}
-[data-theme="light"] .modal-backdrop{background:rgba(0,0,0,.5)}
-.modal-backdrop.show{display:flex}
-.modal{background:var(--bg-modal);border:1px solid var(--accent-border);border-radius:18px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:30px 26px;position:relative;animation:modalIn .3s ease}
-@keyframes modalIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-.modal-close{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border-input);color:var(--text-dim);width:30px;height:30px;border-radius:8px;font-size:16px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center}
-.modal-close:hover{color:var(--text-secondary);border-color:var(--border-hover)}
+/* ── Rarity badge ── */
+.rarity-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.35s;
+}
+.rarity-common { background: rgba(120,120,120,0.08); color: #666; border: 1px solid rgba(120,120,120,0.12); }
+.rarity-rare { background: rgba(59,130,246,0.08); color: #5090e0; border: 1px solid rgba(59,130,246,0.15); }
+.rarity-epic { background: rgba(168,85,247,0.08); color: #a86fe0; border: 1px solid rgba(168,85,247,0.15); }
+.rarity-legendary { background: rgba(191,154,38,0.08); color: var(--accent); border: 1px solid var(--accent-border); }
 
-.modal-icon-wrap{text-align:center;margin-bottom:18px}
-.modal-icon{width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,rgba(191,154,38,.12),rgba(191,154,38,.02));border:1px solid rgba(191,154,38,.18);display:inline-flex;align-items:center;justify-content:center}
-[data-theme="light"] .modal-icon{background:linear-gradient(135deg,rgba(139,105,20,.12),rgba(139,105,20,.02));border:1px solid rgba(139,105,20,.18)}
-.modal-icon .icon-svg{width:40px;height:40px;fill:none;stroke:var(--accent);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
-.modal-icon.locked-icon{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06)}[data-theme="light"] .modal-icon.locked-icon{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.06)}
-.modal-icon.locked-icon .icon-svg{stroke:#333;opacity:.5}
-.modal-cat-tag{display:inline-block;padding:3px 12px;border-radius:10px;font-size:11px;background:rgba(191,154,38,.06);color:var(--text-muted);border:1px solid var(--border-default);margin-bottom:14px}[data-theme="light"] .modal-cat-tag{background:rgba(139,105,20,.06)}
-.modal-title{text-align:center;font-size:20px;font-weight:600;color:#e8d8a0;margin-bottom:8px}[data-theme="light"] .modal-title{color:#8B6914}
-.modal-title.locked-title{color:var(--text-dim)}.modal-desc{text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:18px;line-height:1.6}.modal-desc.locked-desc{color:var(--text-dimmer)}
-.modal-stats{display:flex;justify-content:center;gap:28px;margin-bottom:20px}.modal-stat{text-align:center}
-.modal-stat-num{font-size:22px;font-weight:700;color:var(--accent)}.modal-stat-num.locked-stat{color:var(--text-dimmer)}.modal-stat-label{font-size:10.5px;color:var(--text-dim);margin-top:2px}
-.modal-story{background:rgba(255,255,255,.02);border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,.04);margin-bottom:18px}[data-theme="light"] .modal-story{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.04)}
-.modal-story-label{color:var(--text-dim);font-size:11px;margin-bottom:7px}.modal-story-text{color:var(--text-secondary);font-size:13px;line-height:1.75}
-.modal-toggle-btn{display:block;margin:0 auto;padding:9px 28px;border-radius:8px;font-size:13px;cursor:pointer;transition:.25s;border:1px solid var(--accent-border);background:var(--accent-bg);color:var(--accent)}
-.modal-toggle-btn:hover{background:rgba(191,154,38,.12);border-color:rgba(191,154,38,.35)}[data-theme="light"] .modal-toggle-btn:hover{background:rgba(139,105,20,.12);border-color:rgba(139,105,20,.35)}
-.modal-toggle-btn.locked-btn{border-color:var(--border-input);background:var(--bg-toolbar-btn);color:var(--text-muted)}.modal-toggle-btn.locked-btn:hover{border-color:var(--accent-border);color:var(--accent)}
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-dimmer);
+}
+.empty-state .empty-icon { font-size: 42px; margin-bottom: 14px; opacity: 0.25; }
 
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-toast);border:1px solid var(--accent-border);color:var(--text-primary);padding:12px 24px;border-radius:10px;font-size:13px;z-index:200;opacity:0;transition:.4s ease;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.3)}[data-theme="light"] .toast{box-shadow:0 4px 20px rgba(0,0,0,.1)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ── Footer ── */
+.footer-note {
+  text-align: center;
+  padding: 24px 20px 40px;
+  color: var(--text-dimmer);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
 
-@media(max-width:520px){.achievement-grid{grid-template-columns:1fr}.header h1{font-size:24px;letter-spacing:3px}.stat-item{padding:10px 16px;min-width:100px}.stat-number{font-size:20px}.toolbar{flex-direction:column;align-items:stretch}.toolbar-btns{justify-content:center}.modal{padding:22px 18px}}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--scrollbar-bg)}::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
+/* ── Modal ── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+[data-theme="light"] .modal-backdrop {
+  background: rgba(0,0,0,0.5);
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: var(--bg-modal);
+  border: 1px solid var(--accent-border);
+  border-radius: 18px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 30px 26px;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: none;
+  border: 1px solid var(--modal-close-border, var(--border-input));
+  color: var(--text-dim);
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:hover { color: var(--text-secondary); border-color: var(--border-hover); }
+[data-theme="light"] .modal-close {
+  --modal-close-border: rgba(0,0,0,0.08);
+}
+
+.modal-icon-wrap { text-align: center; margin-bottom: 18px; }
+.modal-icon {
+  width: 72px; height: 72px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(191,154,38,0.12), rgba(191,154,38,0.02));
+  border: 1px solid rgba(191,154,38,0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+[data-theme="light"] .modal-icon {
+  background: linear-gradient(135deg, rgba(139,105,20,0.12), rgba(139,105,20,0.02));
+  border: 1px solid rgba(139,105,20,0.18);
+}
+.modal-icon .icon-svg {
+  width: 40px; height: 40px;
+  fill: none; stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.modal-icon.locked-icon {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.06);
+}
+[data-theme="light"] .modal-icon.locked-icon {
+  background: rgba(0,0,0,0.02);
+  border-color: rgba(0,0,0,0.06);
+}
+.modal-icon.locked-icon .icon-svg { stroke: var(--icon-locked-stroke); opacity: 0.5; }
+.modal-cat-tag {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: rgba(191,154,38,0.06);
+  color: var(--text-muted);
+  border: 1px solid var(--border-default);
+  margin-bottom: 14px;
+}
+[data-theme="light"] .modal-cat-tag {
+  background: rgba(139,105,20,0.06);
+}
+.modal-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: #e8d8a0;
+  margin-bottom: 8px;
+}
+[data-theme="light"] .modal-title { color: #8B6914; }
+.modal-title.locked-title { color: var(--text-dim); }
+.modal-desc {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+.modal-desc.locked-desc { color: var(--text-dimmer); }
+.modal-stats {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 20px;
+}
+.modal-stat { text-align: center; }
+.modal-stat-num { font-size: 22px; font-weight: 700; color: var(--accent); }
+.modal-stat-num.locked-stat { color: var(--text-dimmer); }
+.modal-stat-label { font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+.modal-story {
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.04);
+  margin-bottom: 18px;
+}
+[data-theme="light"] .modal-story {
+  background: rgba(0,0,0,0.02);
+  border-color: rgba(0,0,0,0.04);
+}
+.modal-story-label { color: var(--text-dim); font-size: 11px; margin-bottom: 7px; }
+.modal-story-text { color: var(--text-secondary); font-size: 13px; line-height: 1.75; }
+.modal-toggle-btn {
+  display: block;
+  margin: 0 auto;
+  padding: 9px 28px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.modal-toggle-btn:hover {
+  background: rgba(191,154,38,0.12);
+  border-color: rgba(191,154,38,0.35);
+}
+[data-theme="light"] .modal-toggle-btn:hover {
+  background: rgba(139,105,20,0.12);
+  border-color: rgba(139,105,20,0.35);
+}
+.modal-toggle-btn.locked-btn {
+  border-color: var(--border-input);
+  background: var(--bg-toolbar-btn);
+  color: var(--text-muted);
+}
+.modal-toggle-btn.locked-btn:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+/* ── Toast notification ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-toast);
+  border: 1px solid var(--accent-border);
+  color: var(--text-primary);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  z-index: 200;
+  opacity: 0;
+  transition: all 0.4s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+[data-theme="light"] .toast {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .achievement-grid { grid-template-columns: 1fr; }
+  .header h1 { font-size: 24px; letter-spacing: 3px; }
+  .stat-item { padding: 10px 16px; min-width: 100px; }
+  .stat-number { font-size: 20px; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar-btns { justify-content: center; }
+  .modal { padding: 22px 18px; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 </style>
 </head>
 <body>
 
-<div class="header"><h1>地球 Online</h1><div class="subtitle">Achievement System · 人生成就系统 · 117个成就</div></div>
+<div class="header">
+  <h1>地球 Online</h1>
+  <div class="subtitle">Achievement System · 人生成就系统</div>
+</div>
+
 <div class="stats-bar" id="statsBar"></div>
+
 <div class="toolbar">
-  <div class="search-box"><span class="search-icon">&#128269;</span><input type="text" id="searchInput" placeholder="搜索成就名称或描述..."></div>
+  <div class="search-box">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="搜索成就名称或描述...">
+  </div>
   <div class="toolbar-btns">
-    <button class="sort-btn active" id="sortBtn" onclick="toggleSort()">解锁难度 <span class="arrow">&#9650;</span></button>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换主题"><span id="themeIcon">&#127769;</span></button>
-    <button class="action-btn export-btn" onclick="exportProgress()" title="导出存档">&#128229; 导出</button>
-    <button class="action-btn export-btn" onclick="document.getElementById('importFile').click()" title="导入存档">&#128228; 导入</button>
+    <button class="sort-btn active" id="sortBtn" onclick="toggleSort()">
+      解锁难度 <span class="arrow">&#9650;</span>
+    </button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换主题">
+      <span id="themeIcon">&#127769;</span>
+    </button>
+    <button class="action-btn export-btn" onclick="exportProgress()" title="导出存档到文件">
+      &#128229; 导出
+    </button>
+    <button class="action-btn export-btn" onclick="document.getElementById('importFile').click()" title="从文件导入存档">
+      &#128228; 导入
+    </button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importProgress(this)">
-    <button class="action-btn danger" onclick="resetProgress()" title="重置进度">&#8634; 重置</button>
+    <button class="action-btn danger" onclick="resetProgress()" title="清除本地存档，恢复初始状态">
+      &#8634; 重置
+    </button>
   </div>
 </div>
-<div class="category-tabs" id="categoryTabs"></div>
-<div class="container" id="mainContainer"><div class="achievement-grid" id="grid"></div><div class="empty-state" id="emptyState" style="display:none;"><div class="empty-icon">&#128270;</div><p>没有找到匹配的成就</p></div></div>
-<div class="footer-note">地球Online v2026.06 · 每个人都是自己人生的主角</div>
 
-<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()"><div class="modal" id="modalBox"><button class="modal-close" onclick="closeModal()">&times;</button><div id="modalContent"></div></div></div>
+<div class="category-tabs" id="categoryTabs"></div>
+
+<div class="container" id="mainContainer">
+  <div class="achievement-grid" id="grid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon">&#128270;</div>
+    <p>没有找到匹配的成就</p>
+  </div>
+</div>
+
+<div class="footer-note">
+  地球Online v2026.06 · 每个人都是自己人生的主角
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-// 地球Online 成就数据（117个成就）
-// ══════════════════════════════════════════════
-const ACHIEVEMENTS = [
-//── 第一组：原有60个成就 ──
-{id:1,t:"呼吸第一口空气",d:"出生于这个星球，完成角色创建",r:100,c:"新手村",
- s:"恭喜！你已成功降生至地球Online。系统已为你分配初始角色属性，请开始你的探索之旅。"},
-{id:2,t:"第一次大声啼哭",d:"用哭声宣告你的到来",r:100,c:"新手村",
- s:"你的第一声啼哭回荡在产房里——这是你第一次与世界建立连接。"},
-{id:3,t:"学会走路",d:"不依靠任何辅助，独立完成移动",r:98,c:"新手村",
- s:"你摇摇晃晃站了起来，终于迈出了人生第一步。世界在你脚下展开。"},
-{id:4,t:"第一次叫爸爸妈妈",d:"解锁语言技能的第一级",r:96,c:"新手村",
- s:"你模糊地喊出了「爸爸」「妈妈」，这两个词将伴随你一生。"},
-{id:5,t:"进入学校",d:"解锁「义务教育」副本，持续9年",r:94,c:"学业",
- s:"你走进校门，这是人生最长的一个副本，没有存档，不能重来。"},
-{id:6,t:"小学毕业",d:"完成义务教育第一阶段",r:92,c:"学业",
- s:"六年匆匆而过，那是人生中最无忧无虑的夏天。"},
-{id:7,t:"中考突围",d:"在50%淘汰率中存活",r:90,c:"学业",
- s:"笔尖划过试卷，这张纸将决定未来三年的去向。"},
-{id:8,t:"高考通关",d:"完成人生最重要的限时考试",r:85,c:"学业",
- s:"六月的酷暑，走出考场时阳光刺眼——一个时代结束，另一个开始。"},
-{id:9,t:"本科毕业",d:"获得学士学位",r:75,c:"学业",
- s:"把学士帽帽穗拨到另一边，四年青春在此画上句号。"},
-{id:10,t:"硕士研究生",d:"获得硕士学位",r:43,c:"学业",R:"rare",
- s:"图书馆的深夜换来了论文答辩时的从容——你做到了。"},
-{id:11,t:"博士毕业",d:"获得博士学位",r:23,c:"学业",R:"epic",
- s:"五年甚至更久，「博士」二字意味着站在知识边界，发现更大的未知。"},
-{id:12,t:"学会骑自行车",d:"掌握基础移动技能",r:95,c:"技能",
- s:"摔倒无数次后风从耳边掠过——你感觉自己像在飞。"},
-{id:13,t:"学会游泳",d:"解锁水上移动技能",r:80,c:"技能",
- s:"被扔进深水区本能划动，浮起时征服水域的快感忘却恐惧。"},
-{id:14,t:"拿到驾照",d:"解锁「机动车」使用权",r:78,c:"技能",
- s:"教练踩了无数次副刹，终于拿到那张小本子——去任何地方吧。"},
-{id:15,t:"学会做饭",d:"解锁「料理」生活技能",r:65,c:"技能",
- s:"厨房像战场但成就感无可替代——你做出了第一顿饭！"},
-{id:16,t:"掌握第二语言",d:"解锁与另一个文化沟通的技能",r:32,c:"技能",R:"rare",
- s:"用另一种语言讲了个笑话对方笑了——真正掌握了它。"},
-{id:17,t:"独自生活",d:"第一次不依赖父母，独立居住",r:70,c:"生活",
- s:"钥匙插入锁孔——既是自己的监护人，也是自己的孩子。"},
-{id:18,t:"第一次租房",d:"在陌生的城市找到自己的角落",r:68,c:"生活",
- s:"房子不大墙面发霉，但第一次拥有属于自己的空间。"},
-{id:19,t:"买房签约",d:"在地球上拥有一个永久坐标",r:32,c:"生活",R:"rare",
- s:"签下名字背负二十年承诺，打开家门一切值得。"},
-{id:20,t:"全款置业",d:"无贷款拥有一个家",r:4,c:"生活",R:"legendary",
- s:"一次性付清房款，房产证上只有你的名字——最难成就之一。"},
-{id:21,t:"装修小能手",d:"亲手打造梦想中的居住空间",r:25,c:"生活",R:"epic",
- s:"刷墙装灯拼家具，毛坯变新家——朋友们惊叹就是最好回报。"},
-{id:22,t:"第一次通宵",d:"体验24小时不眠之夜",r:88,c:"成长",
- s:"盯着天花板到天亮——长大是无数这样的夜晚堆积的。"},
-{id:23,t:"第一次喝醉",d:"体验酒精的副作用",r:82,c:"成长",
- s:"醒来头疼发誓戒酒——人总会忘记疼痛重复错误。"},
-{id:24,t:"第一次失恋",d:"体验心碎的感觉，解锁「坚强」属性",r:85,c:"成长",
- s:"删除聊天记录雨中行走——多年后感谢让你心碎的人教会了爱。"},
-{id:25,t:"独自旅行",d:"一个人出发去完全陌生的地方",r:58,c:"成长",
- s:"没有导游没有攻略只有自己——害怕又无比自由。"},
-{id:26,t:"跨过大半个球",d:"到达时差超过6小时的地方",r:18,c:"成长",R:"epic",
- s:"落地凌晨三点窗外烈日当空——世界比想象中大得多。"},
-{id:27,t:"初恋",d:"第一次心动，解锁「喜欢」情绪",r:90,c:"情感",
- s:"心跳加速偷偷写TA的名字——心动比教科书管用。"},
-{id:28,t:"第一次牵手",d:"解锁亲密接触第一阶段",r:88,c:"情感",
- s:"手指课桌下碰触试探握住——希望时间停在这一刻。"},
-{id:29,t:"第一次接吻",d:"解锁亲密接触第二阶段",r:85,c:"情感",
- s:"紧张得忘记呼吸——第一次的笨拙青涩永远记得。"},
-{id:30,t:"第一次说「我爱你」",d:"向另一个人完全敞开心扉",r:82,c:"情感",
- s:"声音发抖对方说我也爱你——世界为你鼓掌。"},
-{id:31,t:"结婚",d:"与另一个玩家签订终身契约",r:53,c:"情感",
- s:"婚礼上承诺不离不弃——从初见到此生相伴。"},
-{id:32,t:"成为父母",d:"解锁「养育」副本持续终身",r:48,c:"情感",R:"rare",
- s:"抱起小小生命软又轻——原来父母也是这样抱着你的。"},
-{id:33,t:"陪父母旅行",d:"长大后重新认识父母",r:45,c:"家庭",R:"rare",
- s:"父亲步慢了母亲记性差了——你在成为他们的依靠。"},
-{id:34,t:"带家人吃豪华大餐",d:"用自己的钱请家人吃顿好的",r:38,c:"家庭",R:"rare",
- s:"父母既心疼又骄傲——能回报养育之恩了。"},
-{id:35,t:"家庭聚餐组织者",d:"成为家庭聚会的策划者核心人物",r:28,c:"家庭",R:"rare",
- s:"张罗聚餐安排座位照顾口味——已是这个家的主心骨。"},
-{id:36,t:"打卡5A级景区",d:"参观中国最高评级景区",r:72,c:"旅行",
- s:"排队两小时打卡五分钟——确实值得。"},
-{id:37,t:"出国旅行",d:"踏足另一个国家",r:35,c:"旅行",R:"rare",
- s:"空气陌生路牌看不懂——世界大到一生走不完。"},
-{id:38,t:"走过五大洲",d:"每个大洲都留下足迹",r:7,c:"旅行",R:"legendary",
- s:"南极冰川非洲草原欧洲古镇南美雨林——丈量这颗星球。"},
-{id:39,t:"看一次极光",d:"北极圈附近目睹大自然灯光秀",r:12,c:"旅行",R:"epic",
- s:"零下二十度等三小时绿色光幕舞动——最美之光只属于星球本身。"},
-{id:40,t:"通关一个游戏",d:"不看攻略通关一款游戏",r:60,c:"娱乐",
- s:"死了无数次卡关卡到想砸键盘——制作人员名单滚动值了。"},
-{id:41,t:"看完100部电影",d:"解锁电影爱好者称号",r:55,c:"娱乐",
- s:"黑暗影厅笑过哭过思考过——看的是无数种人生可能。"},
-{id:42,t:"参加一场演唱会",d:"现场感受音乐力量",r:42,c:"娱乐",R:"rare",
- s:"几万人合唱同一首歌——音乐是最接近魔法的事物。"},
-{id:43,t:"交到一辈子朋友",d:"有一个认识10年以上的朋友",r:62,c:"社交",
- s:"十年从校服到婚纱——共同记忆与秘密就是一辈子朋友的意义。"},
-{id:44,t:"异国他乡遇同胞",d:"他乡遇故知",r:30,c:"社交",R:"rare",
- s:"街头听到熟悉语言亲切感淹没——那个下午咖啡永不忘。"},
-{id:45,t:"帮助陌生人",d:"无条件帮助素不相识的人",r:40,c:"社交",R:"rare",
- s:"雨天撑伞指路——善良是最强大的技能没有之一。"},
-{id:46,t:"第一份工作",d:"解锁打工人身份",r:83,c:"职业",
- s:"提前半小时到公司——终于是个「大人」了。"},
-{id:47,t:"升职加薪",d:"职业能力得到认可",r:51,c:"职业",
- s:"老板说做得好多加班夜晚换来你值得。"},
-{id:48,t:"创业",d:"创建自己的组织",r:15,c:"职业",R:"epic",
- s:"辞掉稳定工作注册公司三个月无收入——第一笔订单进账哭了。"},
-{id:49,t:"财富自由",d:"被动收入覆盖生活支出",r:5.2,c:"职业",R:"legendary",
- s:"不再为账单担心——自由最昂贵快乐来自选择权。"},
-{id:50,t:"学会拒绝",d:"勇敢对不合理说不",r:36,c:"成长",R:"rare",
- s:"第一次说不忐忑不安却轻松——说不也是种能力。"},
-{id:51,t:"坚持习惯100天",d:"用行动证明自律不是鸡汤",r:21,c:"成长",R:"epic",
- s:"第一天斗志第十天想放弃第一百天已成为生活一部分。"},
-{id:52,t:"读完50本书",d:"解锁终身学习成就",r:19,c:"兴趣",R:"epic",
- s:"五十本书改变不了命运但改变了你看世界的方式。"},
-{id:53,t:"跑完马拉松",d:"42.195公里用双脚丈量极限",r:8,c:"兴趣",R:"legendary",
- s:"35公里差点放弃冲线后已在想下一个马拉松。"},
-{id:54,t:"学会一种乐器",d:"用音乐表达无法言说的心情",r:26,c:"兴趣",R:"epic",
- s:"第一次完整弹出一曲——音乐是灵魂的语言。"},
-{id:55,t:"减肥20斤",d:"用自律战胜地心引力",r:11,c:"成长",R:"epic",
- s:"戒宵夜健身房体重怀疑——穿进旧裤子无所不能。"},
-{id:56,t:"献血",d:"400ml血液拯救陌生人生命",r:22,c:"社交",R:"epic",
- s:"卷起袖子针头扎静脉——每个人都可以成为英雄只需勇气。"},
-{id:57,t:"坚持记账一年",d:"清楚每分钱去向",r:14,c:"生活",R:"epic",
- s:"奶茶花太多——重新思考值得的消费是对劳动成果尊重。"},
-{id:58,t:"养植物活一年",d:"解锁生命养育初级成就",r:33,c:"生活",R:"rare",
- s:"浇水施肥晒太阳绿萝活了一年——养育生命需要耐心。"},
-{id:59,t:"公开演讲",d:"克服恐惧用声音影响他人",r:29,c:"成长",R:"rare",
- s:"双腿发抖声音发颤掌声响起——害怕没那么可怕。"},
-{id:60,t:"自律传说",d:"365天每天早起坚持自律",r:7,c:"成长",R:"legendary",
- s:"对抗床引力和手机诱惑——超越99%的玩家。"},
-
-//── 第二组：原图新增57个成就 ──
-{id:61,t:"开局显眼",d:"成功创建专属角色正式登陆地球Online服务器",r:100,c:"新手村",
- s:"服务器启动角色加载完毕——这里没有新手保护期也没有读档重来。祝你游戏愉快。"},
-{id:62,t:"难道我是天才？",d:"考试获得过满分",r:72,c:"学业",
- s:"试卷满分全班念名字——可能只是为数不多的高光时刻。"},
-{id:63,t:"学有所成",d:"通过高等教育拿到大学毕业证",r:38,c:"学业",R:"rare",
- s:"学位服走了一圈想把校园记住——纸背后故事才是财富。"},
-{id:64,t:"驾照猎人",d:"通过驾考拿驾照解锁机动车驾驶权限",r:53,c:"技能",
- s:"科目二挂两次科目三手心冒汗——方向盘在自己手里了。"},
-{id:65,t:"经济断奶",d:"经济独立不再依赖原生家庭补贴",r:27,c:"生活",R:"rare",
- s:"第一次自己付房租水电费——经济独立的成年人了。"},
-{id:66,t:"厨艺觉醒",d:"不靠外卖做出一桌像样的家常菜",r:62,c:"技能",
- s:"以前只会泡面今天三菜一汤——光盘时简直是米其林大厨。"},
-{id:67,t:"这样才卷？",d:"非上课时间一天学习超10小时",r:18.6,c:"学业",R:"epic",
- s:"凌晨两点刷题室友说你疯了——最纯粹的时光。"},
-{id:68,t:"初恋支线",d:"触发人生第一次心动恋爱剧情线",r:71,c:"情感",
- s:"洗发水香味种下种子发芽开花凋零——永远记住心跳加速。"},
-{id:69,t:"空想行动派",d:"想法太多始终迈不出动手那步",r:60.7,c:"成长",
- s:"无数计划停在脑海里没有一个实现——至少还拥有做梦权利。"},
-{id:70,t:"亲密羁绊",d:"完成婚姻系统绑定缔结永久伴侣关系",r:35,c:"情感",R:"rare",
- s:"签的不只是法律文件更是余生承诺——更长冒险的开始。"},
-{id:71,t:"子嗣DLC",d:"解锁下一代新角色开启高难支线副本",r:32,c:"情感",R:"rare",
- s:"产房外来回踱步护士说恭喜——准备好迎接没有存档的高难副本吗？"},
-{id:72,t:"海外打卡",d:"拥有一次国外旅行的经历",r:11,c:"旅行",R:"epic",
- s:"护照盖首个入境印章——世界更大更多彩刚开始探索。"},
-{id:73,t:"通宵达人",d:"凌晨3点仍在线突破熬夜极限",r:93,c:"成长",
- s:"朋友圈只剩你活跃不知道为什么不睡——太阳升起又活了。"},
-{id:74,t:"拖延症",d:"事情总等截止日期当天极限救场",r:88,c:"成长",
- s:"截止前一晚肾上腺素飙升每次发誓提前——历史重演心脏受不了太久。"},
-{id:75,t:"月光战神",d:"每月工资清零存款趋近归零",r:82,c:"生活",
- s:"发工资最富消费欲最强月底发誓存钱循环重新开始。"},
-{id:76,t:"外卖至尊VIP",d:"连续一周三餐全靠外卖零下厨",r:78,c:"生活",
- s:"厨房积灰外卖小哥最熟人——谁愿意洗碗呢？"},
-{id:77,t:"长期单身常驻",d:"成年后连续单身4年以上未开启恋爱支线",r:37,c:"情感",R:"rare",
- s:"朋友一个个脱单结婚生子你仍单身——自由真好爱情急不来。"},
-{id:78,t:"异乡打工人",d:"背井离乡在外打拼年回家不超2次",r:43,c:"职业",R:"rare",
- s:"拖着行李箱来陌生城市出租屋小工作累月月往家里打钱——一座桥连故乡与远方。"},
-{id:79,t:"零负债人生",d:"无房贷车贷网贷真正一身轻",r:9,c:"财务",R:"epic",
- s:"人人负债的时代零负债活得轻松——不是赚得多是懂控制欲望。"},
-{id:80,t:"初心未改",d:"成年后仍守住年少热爱",r:55,c:"成长",
- s:"小时候喜欢画画音乐写作运动偷偷保留——少年从未离开身体里。"},
-{id:81,t:"真心羁绊",d:"有相处10年以上无条件信任的挚友",r:13,c:"社交",R:"epic",
- s:"十年见过彼此最狼弊分享最深藏秘密吵过和好——有人一直在最珍贵。"},
-{id:82,t:"安装语言包DLC",d:"掌握一门母语以外的语言",r:9.3,c:"技能",R:"epic",
- s:"从ABC开始数年流利表达另一种语言打开一扇窗看到不一样的风景。"},
-{id:83,t:"首次远行",d:"第一次独自离开家乡前往陌生城市",r:85,c:"成长",
- s:"火车驶离站台家乡远去兴奋又不安——真正意义上第一次出发要学会一个人面对世界。"},
-{id:84,t:"我停不下来",d:"连续8小时不间断刷视频全程不离屏",r:32,c:"娱乐",R:"rare",
- s:"本想五分钟放松一抬头天黑了手机电量掉到5%手指停不下来——算法比你了解你自己。"},
-{id:85,t:"人形闹钟",d:"超过24小时不睡觉",r:16.7,c:"成长",R:"epic",
- s:"盯着时钟跳过24小时眼皮沉重大脑迟钝就是睡不着——挑战人类生理极限。"},
-{id:86,t:"资深玩家",d:"单款游戏总时长突破1000小时",r:23.2,c:"娱乐",R:"epic",
- s:"Steam显示1000+小时值不值得——深夜队友欢笑泪水不是数字能衡量的。"},
-{id:87,t:"故人走散",d:"和年少最好的朋友慢慢淡出彼此生活",r:75,c:"社交",
- s:"形影不离无话不说各自去了不同城市聊天记录停在去年生日祝福——TA现在过得好吗？"},
-{id:88,t:"遗憾离场",d:"认真爱过一个最终没能走到最后",r:61,c:"情感",
- s:"认真过努力过争吵妥协还是走散——遗憾是成长代价学会了如何去爱。"},
-{id:89,t:"守住热爱",d:"坚持一件爱好5年以上从未放弃",r:13,c:"兴趣",R:"epic",
- s:"五年还在画画跑步写作摄影弹琴——不一定带来名利但灵魂有栖息之地。"},
-{id:90,t:"独处常态",d:"习惯一人吃饭出行逛街享受独处",r:43,c:"成长",R:"rare",
- s:"一人吃火锅看电影旅行不再尴尬享受自由——与自己相处是最重要的能力。"},
-{id:91,t:"说走就走",d:"临时起意即兴开启一段旅程",r:21.7,c:"旅行",R:"epic",
- s:"周五突发奇想买票周六已在另一城市喝咖啡——冲动是最好的礼物。"},
-{id:92,t:"自我救赎",d:"低谷时期自我调节不靠他人走出阴霾",r:67,c:"成长",
- s:"不想见任何人逼自己做点小事洗洗澡出门走走吃顿好的光透进来——救了自己这份力量伴一生。"},
-{id:93,t:"双向钟情",d:"向喜欢的人表白结果对方也喜欢你",r:63,c:"情感",
- s:"鼓起全部勇气说我喜欢你心跳快蹦出TA也笑——双向奔赴是最美好的事。"},
-{id:94,t:"岁岁平安",d:"一生无重大意外灾祸生活安稳顺遂",r:78,c:"生活",
- s:"平平淡淡没什么波澜壮阔——平平安安长大变老本身就是了不起的幸运。"},
-{id:95,t:"乐坛赴约",d:"亲临现场观看线下演唱会",r:18.6,c:"娱乐",R:"epic",
- s:"灯光暗下全场尖叫几万人合唱陪伴整个青春的歌眼泪下来了——此刻太美好。"},
-{id:96,t:"观影达人",d:"一年累计观看电影超30部",r:23.5,c:"娱乐",R:"epic",
- s:"片单越来越长观影记录密密麻麻三十部五十部一百部——世界观在光影中悄然改变。"},
-{id:97,t:"无声的陪伴",d:"养宠猫狗超过5年朝夕相伴",r:29.3,c:"生活",R:"rare",
- s:"五年从小奶猫/幼犬变成生活中最重要的一部分不在家等你回家扑向你——纯粹的爱。"},
-{id:98,t:"山野露营",d:"体验户外野外露营过夜",r:10.3,c:"旅行",R:"epic",
- s:"篝火噼啪作响满天繁星近在咫尺虫鸣风声中看清银河全貌——夜空这么美。"},
-{id:99,t:"安装乐器DLC",d:"掌握一种乐器演奏",r:11.3,c:"兴趣",R:"epic",
- s:"手指磨出茧和弦按得生疼直到完整弹出一首曲——痛苦化作音符跳跃。"},
-{id:100,t:"自驾游历",d:"拥有一次驾车出行的旅游经历",r:35.4,c:"旅行",R:"rare",
- s:"握着方向盘载着好友爱人沿海岸线南下音乐开着窗摇下来大声唱歌——沿途风景就是目的。"},
-{id:101,t:"巅峰登临",d:"徒步登顶高山俯瞰大地",r:43.5,c:"旅行",R:"rare",
- s:"最后几百米最难每一步调动全身力气站上山顶云海翻涌群山如波浪——徒步教会在疲惫中前行。"},
-{id:102,t:"追剧达人",d:"完整追完10部长篇剧集",r:38.2,c:"娱乐",R:"rare",
- s:"熬夜追完一部又一部为角色命运揪心为反转惊叹十部剧几百个小时活在平行世界里体验另一种人生。"},
-{id:103,t:"徒步旅人",d:"完成三天以上长途徒步路线",r:87,c:"旅行",
- s:"三天六十公里脚底水泡双腿灌铅终点回望发现自己更强——不是走路是在疲惫中继续前行。"},
-{id:104,t:"误闯新世界",d:"本想查资料结果刷了几小时视频",r:65.3,c:"娱乐",
- s:"打开手机搜题三个小时后在傻笑——推荐算法把你带入全新世界甚至不记得怎么进来的。"},
-{id:105,t:"泪失禁体质",d:"为十部以上影视作品感动落泪",r:35.3,c:"娱乐",R:"rare",
- s:"不是爱哭的人但有些电影电视剧让眼泪止不住第十次抹泪认了——敏感不是弱点是感受力证明。"},
-{id:106,t:"爱你老妈明天见",d:"给妈妈准备一份礼物或鲜花",r:52.3,c:"家庭",
- s:"妈妈收到礼物嘴上说乱花钱脸上笑开了花——她不会说出来但此刻是最幸福的母亲别等母亲节才想起。"},
-{id:107,t:"方言包DLC",d:"熟练掌握2种及以上地方方言",r:18.3,c:"技能",R:"epic",
- s:"不止普通话还能用两种以上方言无缝交流——每种方言背后都是地域文化密码掌握好几把钥匙。"},
-{id:108,t:"公共交通常客",d:"常年依赖地铁公交日常出行",r:59.2,c:"生活",
- s:"每条线路换乘站如数家珍早高峰挤地铁技巧炉火纯青——不只是没车的能力而是生活方式。"},
-{id:109,t:"极简社交者",d:"只维持3个以内核心好友关系",r:28.4,c:"社交",R:"rare",
- s:"通讯录人多但真朋友两三个不热衷社交不觉得孤独——质量永远大于数量几个知己胜过千百点赞之交。"},
-{id:110,t:"心灵手巧",d:"独立完成手工DIY制作作品",r:22.1,c:"兴趣",R:"epic",
- s:"从零开始一块木头一根线一团泥逐渐变成完整物件虽然不完美但独一无二——DIY快乐在于创造而不在于成品精美。"},
-{id:111,t:"落日收藏家",d:"特意奔赴多地拍摄日落美景",r:78,c:"兴趣",
- s:"相册专门存放日落照片海边山顶城市天台机场跑道——追逐的不是太阳是一瞬间的宁静与感动。"},
-{id:112,t:"不眠者",d:"平均每日睡眠少于7小时",r:36.2,c:"健康",R:"rare",
- s:"六小时睡眠已成常态用咖啡因对抗困倦告诉自己奋斗代价——身体总有一天会讨债的。"},
-{id:113,t:"瞌睡君",d:"成功单日睡眠达10小时以上",r:19.3,c:"健康",R:"epic",
- s:"难得假期关掉所有闹钟一口气睡十几个小时醒来阳光正好肚子咕咕叫大脑一片空白——太爽了。"},
-{id:114,t:"千里赴约",d:"跨越千里只为见一个人",r:11.6,c:"社交",R:"epic",
- s:"买机票火车票穿越大半个中国只为见一面可能只是吃饭散步但跨越千里的心意比什么都珍贵。"},
-{id:115,t:"垂钓闲人",d:"每周户外垂钓享受安静独处时光",r:72,c:"兴趣",
- s:"坐在水边鱼竿一动不动世界只剩水流声鸟鸣钓不钓得到不重要——钓鱼的人不是在钓鱼是在和自己对话。"},
-{id:116,t:"电玩收藏家",d:"入手多款游戏主机设备",r:5.9,c:"兴趣",R:"legendary",
- s:"柜子里摆满Switch PS5 Xbox停产经典机型——每台承载不同年代游戏回忆收藏机器就是在收藏青春。"},
-{id:117,t:"鲜血与钢铁纪念",d:"经历人生重大挑战并存活",r:100,c:"成长",
- s:"经历风暴疾病失去挫折挺过来了伤痕还在但不再是伤口而是勋章——你活着且比以前更强。"}
+// ── Achievement Data (60 achievements) ──
+const achievements = [
+  { id:1, title:"呼吸第一口空气", desc:"出生于这个星球，完成角色创建", rate:100, category:"新手村", rarity:"common",
+    story:"恭喜！你已成功降生至地球Online。系统已为你分配初始角色属性，请开始你的探索之旅。" },
+  { id:2, title:"第一次大声啼哭", desc:"用哭声宣告你的到来", rate:100, category:"新手村", rarity:"common",
+    story:"你的第一声啼哭回荡在产房里，护士轻轻拍了拍你的小屁股，你用尽全力抗议——这是你第一次与世界建立连接。" },
+  { id:3, title:"学会走路", desc:"不依靠任何辅助，独立完成移动", rate:98, category:"新手村", rarity:"common",
+    story:"你摇摇晃晃地站了起来，在无数次摔倒后，终于迈出了人生第一步。这一刻，世界在你脚下展开。" },
+  { id:4, title:"第一次叫爸爸妈妈", desc:"解锁语言技能的第一级", rate:96, category:"新手村", rarity:"common",
+    story:"你模糊地喊出第一声「爸爸」「妈妈」，那一刻父母的眼眶湿润了。你并不知道，这两个词将伴随你一生。" },
+  { id:5, title:"进入学校", desc:"解锁「义务教育」副本，持续9年", rate:94, category:"学业", rarity:"common",
+    story:"你背起书包，走进了校门。铃声响起，黑板上写着第一个字——这是你人生最长的一个副本，没有存档，不能重来。" },
+  { id:6, title:"小学毕业", desc:"完成义务教育第一阶段", rate:92, category:"学业", rarity:"common",
+    story:"六年时光匆匆而过，你穿着校服拍了毕业照。那时候你还不知道，这竟是人生中最无忧无虑的夏天。" },
+  { id:7, title:"中考突围", desc:"在50%淘汰率中存活", rate:90, category:"学业", rarity:"common",
+    story:"你坐在考场上，笔尖划过试卷。这一刻，你并不知道这张纸将决定你未来三年的去向。" },
+  { id:8, title:"高考通关", desc:"完成人生最重要的限时考试", rate:85, category:"学业", rarity:"common",
+    story:"六月的酷暑，你在考场上奋笔疾书。当最后一科结束的铃声响起，你走出考场，阳光刺眼——那是一个时代的结束，也是另一个时代的开始。" },
+  { id:9, title:"本科毕业", desc:"获得学士学位", rate:75, category:"学业", rarity:"common",
+    story:"你穿着学士服，把帽穗从右边拨到左边。四年的熬夜、考试、恋爱、迷茫，在这一刻画上了句号。" },
+  { id:10, title:"硕士研究生", desc:"获得硕士学位", rate:43, category:"学业", rarity:"rare",
+    story:"你在图书馆度过无数个深夜，终于完成了那篇几十页的论文。答辩那天，你站在讲台上，从容地回答每一个问题——你知道，你做到了。" },
+  { id:11, title:"博士毕业", desc:"获得博士学位，成为某个细分领域的专家", rate:23, category:"学业", rarity:"epic",
+    story:"你花了整整五年（甚至更久），终于在那份薄薄的证书上看到了「博士」两个字。你站在学术的巅峰，俯瞰着人类知识的边界——然后发现边界之外还有更大的未知。" },
+  { id:12, title:"学会骑自行车", desc:"掌握基础移动技能", rate:95, category:"技能", rarity:"common",
+    story:"你摔倒了无数次，膝盖上贴满了创可贴。但当你终于能稳稳地踩着踏板前行时，风从耳边掠过——你感觉自己像在飞。" },
+  { id:13, title:"学会游泳", desc:"解锁水上移动技能", rate:80, category:"技能", rarity:"common",
+    story:"你被教练扔进了深水区，本能地划动手脚。当你发现自己真的浮了起来，那种征服水域的快感让你忘记了刚才的恐惧。" },
+  { id:14, title:"拿到驾照", desc:"解锁「机动车」使用权", rate:78, category:"技能", rarity:"common",
+    story:"你紧张地握着方向盘，教练在副驾踩了无数次副刹。终于，你拿到了那张小本子——从此，你可以去任何想去的地方（只要付得起油费）。" },
+  { id:15, title:"学会做饭", desc:"解锁「料理」生活技能", rate:65, category:"技能", rarity:"common",
+    story:"你第一次独立做出一顿能吃的饭。虽然厨房像战场，虽然盐放多了，但当你吃到自己做的菜时，那种成就感无可替代。" },
+  { id:16, title:"掌握第二语言", desc:"解锁与另一个文化沟通的技能", rate:32, category:"技能", rarity:"rare",
+    story:"你花了数年时间背诵单词、练习发音，终于有一天，你用另一种语言流畅地讲述了一个笑话——对方笑了。那一刻你知道，你真正掌握了这门语言。" },
+  { id:17, title:"独自生活", desc:"第一次不依赖父母，独立居住", rate:70, category:"生活", rarity:"common",
+    story:"你提着行李站在出租屋门口，钥匙插入锁孔的那一刻，你意识到：从现在开始，没有人会提醒你天冷加衣、按时吃饭。你既是自己的监护人，也是自己的孩子。" },
+  { id:18, title:"第一次租房", desc:"在陌生的城市找到一个属于自己的角落", rate:68, category:"生活", rarity:"common",
+    story:"你签下了人生第一份租房合同，虽然房子不大，虽然墙面有点发霉，但这是你第一次拥有一个真正属于自己的空间。" },
+  { id:19, title:"买房签约", desc:"在地球上拥有一个永久坐标", rate:32, category:"生活", rarity:"rare",
+    story:"你在购房合同上签下了自己的名字，那一刻你背负了未来二十年的承诺。但当你拿到钥匙打开新家的门，你知道这一切都值得。" },
+  { id:20, title:"全款置业", desc:"无贷款拥有一个属于自己的家", rate:4, category:"生活", rarity:"legendary",
+    story:"你一次性付清了房款，销售看着你的转账记录愣了三秒。你拿到了房产证，上面只有你一个名字——这是地球上最难获得的成就之一。" },
+  { id:21, title:"装修小能手", desc:"亲手打造梦想中的居住空间", rate:25, category:"生活", rarity:"epic",
+    story:"你刷墙、装灯、拼家具，把毛坯房变成了梦想中的家。每一处细节都倾注了你的心血，朋友们参观时发出惊叹——这就是最好的回报。" },
+  { id:22, title:"第一次通宵", desc:"体验24小时不眠之夜", rate:88, category:"成长", rarity:"common",
+    story:"你盯着天花板直到天亮，脑子里回放着今天发生的一切。你第一次意识到，原来长大不是一瞬间的事，而是无数个这样的夜晚堆积起来的。" },
+  { id:23, title:"第一次喝醉", desc:"体验酒精的副作用", rate:82, category:"成长", rarity:"common",
+    story:"你在聚会中第一次喝醉，醒来时头疼欲裂，发誓再也不喝酒了。但你知道吗？人类最迷人的地方就是——我们总是会忘记疼痛，重复同样的错误。" },
+  { id:24, title:"第一次失恋", desc:"体验心碎的感觉，解锁「坚强」属性", rate:85, category:"成长", rarity:"common",
+    story:"你删除了聊天记录，把照片锁进了只有你知道的文件夹。你在雨中走了很久，以为自己撑不过去了。但多年后你回头看，感谢那个让你心碎的人——TA让你学会了爱。" },
+  { id:25, title:"独自旅行", desc:"一个人出发，去一个完全陌生的地方", rate:58, category:"成长", rarity:"common",
+    story:"你拖着行李箱站在陌生的街头，没有导游，没有攻略，只有你自己。那一刻你感到害怕，但也感到无比自由——这是你真正独立的开始。" },
+  { id:26, title:"跨过大半个球", desc:"到达与自己所在时区相差超过6小时的地方", rate:18, category:"成长", rarity:"epic",
+    story:"你坐了十几个小时的飞机，落地时身体告诉你是凌晨三点，窗外却是烈日当空。你站在异国的街头，突然意识到：世界比你想象的要大得多。" },
+  { id:27, title:"初恋", desc:"第一次心动，解锁「喜欢」情绪", rate:90, category:"情感", rarity:"common",
+    story:"你看到TA时心跳加速，写作业时偷偷在纸上写TA的名字。初恋大多没有结果，但它教会了你什么是心动——这比任何教科书都管用。" },
+  { id:28, title:"第一次牵手", desc:"解锁「亲密接触」第一阶段", rate:88, category:"情感", rarity:"common",
+    story:"你们的手指在课桌下偷偷碰触，然后慢慢地、试探性地握在了一起。那天下午的阳光特别温暖，你希望时间能停在这一刻。" },
+  { id:29, title:"第一次接吻", desc:"解锁「亲密接触」第二阶段", rate:85, category:"情感", rarity:"common",
+    story:"你紧张得忘了呼吸，嘴唇碰到的时候脑子一片空白。后来你试过很多次接吻，但第一次的笨拙和青涩，你永远记得。" },
+  { id:30, title:"第一次说「我爱你」", desc:"向另一个人完全敞开心扉", rate:82, category:"情感", rarity:"common",
+    story:"你说这三个字的时候声音在发抖，你不知道对方会怎么回应。但当TA也说「我也爱你」的时候，你觉得整个世界都在为你鼓掌。" },
+  { id:31, title:"结婚", desc:"与另一个玩家签订终身契约", rate:53, category:"情感", rarity:"common",
+    story:"你站在婚礼现场，看着穿着白纱的TA走向你。你想起第一次见面时的场景，没想到有一天你们会站在这里，在所有人面前承诺：无论贫穷富贵，健康疾病，都不离不弃。" },
+  { id:32, title:"成为父母", desc:"解锁「养育」副本，持续终身", rate:48, category:"情感", rarity:"rare",
+    story:"你第一次抱起那个小小的生命，TA那么软、那么轻，却又那么真实地存在着。那一刻你突然明白了，原来你的父母也是这样抱着你、看着你、爱着你——二十年、三十年、四十年。" },
+  { id:33, title:"陪父母旅行", desc:"长大后在旅途中重新认识父母", rate:45, category:"家庭", rarity:"rare",
+    story:"你带着父母去旅行，就像当年他们带你去看世界一样。你发现父亲的步子慢了，母亲的记性不如从前了。你突然意识到：你正在成为他们的依靠，就像他们曾经是你的依靠一样。" },
+  { id:34, title:"带家人吃顿豪华大餐", desc:"用自己的钱请家人吃一顿贵的", rate:38, category:"家庭", rarity:"rare",
+    story:"你订了一家一直想带家人去却舍不得去的餐厅。看着父母脸上既心疼又骄傲的表情，你知道这顿饭值得——不是因为食物有多好吃，而是因为你能回报他们的养育之恩了。" },
+  { id:35, title:"家庭聚餐组织者", desc:"成为家庭聚会的策划者和核心人物", rate:28, category:"家庭", rarity:"rare",
+    story:"你张罗了一次全家聚餐，从订餐厅到安排座位，从点菜到照顾每个人的口味。看着满桌的笑脸，你突然意识到：你已经是这个家的主心骨了。" },
+  { id:36, title:"打卡5A级景区", desc:"参观中国最高评级的旅游景区", rate:72, category:"旅行", rarity:"common",
+    story:"你排队两小时，打卡五分钟。虽然人多到怀疑人生，但当站在那处传世美景前，你承认——确实值得。" },
+  { id:37, title:"出国旅行", desc:"踏足另一个国家", rate:35, category:"旅行", rarity:"rare",
+    story:"你走下飞机，空气里弥漫着陌生的味道，路牌上的文字你看不懂，但你的心里充满了兴奋。原来世界真的很大，大到你用一生也走不完。" },
+  { id:38, title:"走过五大洲", desc:"在地球上的每个大洲都留下足迹", rate:7, category:"旅行", rarity:"legendary",
+    story:"你在七大洲都留下了自己的足迹。从南极的冰川到非洲的草原，从欧洲的古镇到南美的雨林——你用脚步丈量了这颗星球，它比你想象的更美丽、更脆弱、更值得被珍惜。" },
+  { id:39, title:"看一次极光", desc:"在北极圈附近目睹大自然的灯光秀", rate:12, category:"旅行", rarity:"epic",
+    story:"你在零下二十度的夜里等了三个小时，当绿色的光幕在头顶舞动时，你忘记了寒冷。那是你一生中见过的最美的光——它不属于任何城市，只属于这颗星球本身。" },
+  { id:40, title:"通关一个游戏", desc:"在不看攻略的情况下通关一款游戏", rate:60, category:"娱乐", rarity:"common",
+    story:"你在游戏里死了无数次，卡关卡到想砸键盘，但当你终于看到制作人员名单滚动时，那种成就感让你觉得一切都值得。后来你才知道——原来真结局还需要再打三周目。" },
+  { id:41, title:"看完100部电影", desc:"解锁「电影爱好者」称号", rate:55, category:"娱乐", rarity:"common",
+    story:"你在黑暗的影厅里笑过、哭过、思考过。第一百部电影看完的时候，你突然发现——你看的不是电影，是无数种人生的可能性。" },
+  { id:42, title:"参加一场演唱会", desc:"在现场感受音乐的力量", rate:42, category:"娱乐", rarity:"rare",
+    story:"当灯光暗下又骤然亮起，舞台上的TA唱起了你最喜欢的歌。你跟着几万人一起合唱，那一刻你确信：音乐是这个星球上最接近魔法的事物。" },
+  { id:43, title:"交到一辈子朋友", desc:"有一个认识10年以上的朋友", rate:62, category:"社交", rarity:"common",
+    story:"你们认识了十年，从校服到婚纱（或者从单身到单身），从QQ空间到微信朋友圈。你们之间有很多共同记忆，也有很多共同的秘密——这就是一辈子朋友的意义。" },
+  { id:44, title:"在异国他乡遇到同胞", desc:"解锁「他乡遇故知」成就", rate:30, category:"社交", rarity:"rare",
+    story:"你在异国的街头听到熟悉的语言，那种亲切感瞬间淹没了你。你们聊了很久，交换了联系方式，然后各自继续旅行。但那个下午的咖啡，你永远不会忘记。" },
+  { id:45, title:"帮助陌生人", desc:"无条件帮助一个素不相识的人", rate:40, category:"社交", rarity:"rare",
+    story:"你在雨天给没带伞的陌生人撑了一段路，或者帮迷路的人指了路。他们对你说「谢谢」的时候，你突然明白：善良是这个游戏里最强大的技能，没有之一。" },
+  { id:46, title:"第一份工作", desc:"解锁「打工人」身份", rate:83, category:"职业", rarity:"common",
+    story:"你第一天上班，紧张得提前半小时到了公司。你不知道自己会在这个岗位待多久，但你清楚地记得那一刻的心情——终于，你是一个「大人」了。" },
+  { id:47, title:"升职加薪", desc:"职业能力得到认可", rate:51, category:"职业", rarity:"common",
+    story:"你的老板告诉你：「你做得很好，从下个月起……」你努力保持淡定，但心里已经放起了烟花。这是你用无数个加班夜晚换来的，你值得。" },
+  { id:48, title:"创业", desc:"创建自己的组织", rate:15, category:"职业", rarity:"epic",
+    story:"你辞掉了稳定的工作，用积蓄注册了一家公司。前三个月你没有收入，每天都在焦虑中度过。但当第一笔订单进账的时候，你看着那个数字，哭了。" },
+  { id:49, title:"财富自由", desc:"被动收入覆盖生活支出", rate:5.2, category:"职业", rarity:"legendary",
+    story:"你不再需要为账单担心，不再需要在不想工作的日子里强迫自己去上班。你终于拥有了地球上最昂贵的东西——自由。但你也发现，真正让人快乐的不是钱本身，而是钱带来的选择权。" },
+  { id:50, title:"学会拒绝", desc:"勇敢地对不合理的要求说不", rate:36, category:"成长", rarity:"rare",
+    story:"你第一次说「不」的时候，心里忐忑不安，以为世界会崩塌。但什么都没有发生——相反，你感到一种前所未有的轻松。原来，说「不」也是一种能力。" },
+  { id:51, title:"坚持一个习惯100天", desc:"用行动证明自律不是鸡汤", rate:21, category:"成长", rarity:"epic",
+    story:"第一天你充满斗志，第十天你想放弃，第三十天你已经习惯了。第一百天早上，你睁开眼，发现那个曾经需要毅力才能完成的事情，已经变成了你生活的一部分。" },
+  { id:52, title:"读完50本书", desc:"解锁「终身学习」成就", rate:19, category:"兴趣", rarity:"epic",
+    story:"你在第五十本书的最后一页写下日期，回想起第一本书读得磕磕绊绊的日子。这些书没有改变你的命运，但它们改变了你看世界的方式——这就够了。" },
+  { id:53, title:"跑完一场马拉松", desc:"42.195公里，用双脚丈量极限", rate:8, category:"兴趣", rarity:"legendary",
+    story:"35公里的时候你差点放弃，腿像灌了铅，心肺像被人攥住。但当你拐过最后一个弯道看到终点线的时候，你用尽最后一丝力气冲了过去。奖牌挂上脖子的那一刻，你已经在想下一马拉松了。" },
+  { id:54, title:"学会一种乐器", desc:"用音乐表达无法言说的心情", rate:26, category:"兴趣", rarity:"epic",
+    story:"你第一次完整地弹出一首曲子，虽然指法还不熟练，虽然节奏还有点乱，但那段旋律是你自己弹出来的。你突然明白为什么人们会说「音乐是灵魂的语言」。" },
+  { id:55, title:"减肥20斤", desc:"用自律战胜地心引力", rate:11, category:"成长", rarity:"epic",
+    story:"你戒掉了宵夜，每天去健身房，对着体重秤上的数字怀疑人生。但当有一天你穿上那条曾经穿不进去的裤子，拉链顺畅地拉上去——那一刻，你觉得自己无所不能。" },
+  { id:56, title:"献血", desc:"用400ml血液拯救陌生人的生命", rate:22, category:"社交", rarity:"epic",
+    story:"你卷起袖子，看着针头扎进静脉。护士告诉你：你的血可能会救一个手术台上的陌生人。你突然觉得，原来每个人都可以成为别人的英雄——不需要超能力，只需要一点勇气。" },
+  { id:57, title:"坚持记账一年", desc:"清楚每一分钱的去向", rate:14, category:"生活", rarity:"epic",
+    story:"你坚持记录每一笔开销，一年后发现：原来你花了那么多钱在奶茶上。你开始重新思考什么才是真正值得的消费——这不是抠门，这是对自己劳动成果的尊重。" },
+  { id:58, title:"养一盆植物并让它活过一年", desc:"解锁「生命养育」初级成就", rate:33, category:"生活", rarity:"rare",
+    story:"你浇水、施肥、晒太阳，那盆绿萝居然真的活了一年！你骄傲地拍了照片发朋友圈，配文「终于不是植物杀手了」。那一刻你懂了，原来养育生命这件事，比想象中更需要耐心。" },
+  { id:59, title:"在陌生人面前公开演讲", desc:"克服恐惧，用声音影响他人", rate:29, category:"成长", rarity:"rare",
+    story:"你站在台上，双腿发抖，声音发颤。但当你讲完最后一句话，台下响起掌声的时候——你发现，原来害怕这件事本身，并没有那么可怕。" },
+  { id:60, title:"自律传说", desc:"连续365天每天早起，坚持自律生活", rate:7, category:"成长", rarity:"legendary",
+    story:"这是地球上最难达成的成就之一。你需要每天对抗床的引力、手机的诱惑、疲劳的侵袭。但那些早起的时间，那些安静的清晨，最终会变成你人生中最宝贵的财富。恭喜你，你已超越了99%的玩家。" },
+  { id:61, title:"角色创建完成", desc:"成功创建专属角色，正式登陆地球Online", rate:100, category:"新手村", rarity:"common",
+    story:"服务器启动，你的角色数据加载完毕。欢迎来到地球Online——这里没有新手保护期，也没有读档重来的机会，每一个选择都不可逆。祝你游戏愉快。" },
+  { id:62, title:"满分战绩", desc:"考试获得过满分", rate:72, category:"学业", rarity:"common",
+    story:"试卷发下来的时候，你不敢相信自己的眼睛——满分！老师在全班同学面前念出你的名字，那一刻你觉得自己可能是天才。后来你才知道，那可能只是你人生中为数不多的高光时刻。" },
+  { id:63, title:"高等教育毕业", desc:"成功通过高等教育，拿到大学毕业证", rate:38, category:"学业", rarity:"rare",
+    story:"你穿着学位服在校园里走了一圈又一圈，想把这里的每一条路都记住。四年青春换来一张纸，但你清楚知道，这张纸背后的故事，才是真正属于你的财富。" },
+  { id:64, title:"驾考通关", desc:"通过驾考拿到驾照，解锁机动车驾驶权限", rate:53, category:"技能", rarity:"common",
+    story:"科目二你挂了两次，科目三你紧张到手心冒汗，但当你终于握着那张驾驶证走出考场的那一刻，你知道——从此以后，方向盘就在你自己手里了。" },
+  { id:65, title:"经济独立", desc:"解锁「经济独立」被动，不再依赖原生家庭补贴", rate:27, category:"生活", rarity:"rare",
+    story:"第一次用自己挣的钱付房租、买 groceries、交水电费的时候，你感到一阵心疼，但也感到一种从未有过的骄傲——从今天起，你是一个经济独立的成年人了。" },
+  { id:66, title:"厨艺入门", desc:"不靠外卖，独立做出一桌像样的家常菜", rate:62, category:"技能", rarity:"common",
+    story:"以前你只会泡面和煮鸡蛋，但今天你居然做出了三菜一汤！虽然卖相一般，味道也有点咸，但当朋友们光盘的时候，你觉得自己简直是米其林大厨转世。" },
+  { id:67, title:"极限学习", desc:"非上课时间一天学习超过10个小时", rate:18.6, category:"学业", rarity:"epic",
+    story:"凌晨两点你还在刷题，室友说你疯了。你不知道自己在坚持什么，只是不想输给那些比你努力的人。多年以后回想起来，那段拼命的日子，是你人生中最纯粹的时光。" },
+  { id:68, title:"初恋支线开启", desc:"触发人生第一次心动恋爱支剧情线", rate:71, category:"情感", rarity:"common",
+    story:"那天TA从你身边走过，风里有洗发水的香味。你没有想到，这个普通的瞬间会在你心里种下一颗种子，发芽、开花，然后在某个夏天悄悄凋零。但你会永远记住那种心跳加速的感觉。" },
+  { id:69, title:"空想家", desc:"想法太多始终迈不出动手那一步", rate:60.7, category:"成长", rarity:"common",
+    story:"你有无数个计划：学吉他、练英语、开一家咖啡店、环游世界……但它们全都停留在你的脑海里，没有一个变成现实。也许有一天你会迈出第一步，也许不会。但至少，你还拥有做梦的权利。" },
+  { id:70, title:"婚姻契约", desc:"完成婚姻系统绑定，缔结永久伴侣关系", rate:35, category:"情感", rarity:"rare",
+    story:"你们签下的不只是法律文件，而是一份关于余生的承诺。从今往后，无论风雨还是晴天，你们都将并肩前行。这不是终点，而是另一场更长的冒险的开始。" },
+  { id:71, title:"新生命降临", desc:"解锁下一代新角色，开启支线高难副本", rate:32, category:"情感", rarity:"rare",
+    story:"医院产房外，你来回踱步，紧张得手心出汗。护士推开门说「恭喜」的那一刻，你的人生进入了一个全新的章节。准备好迎接这场没有存档的高难副本了吗？" },
+  { id:72, title:"海外旅行", desc:"拥有一次国外旅行的经历", rate:11, category:"旅行", rarity:"epic",
+    story:"护照盖上了第一个入境印章，你站在异国街头，空气是陌生的，语言是不熟悉的，但你的内心充满了兴奋。世界比你想象的更大、更多彩，而你才刚刚开始探索它的第一步。" },
+  { id:73, title:"熬夜冠军", desc:"凌晨3点仍保持在线，突破熬夜生理极限", rate:93, category:"成长", rarity:"common",
+    story:"凌晨三点，朋友圈里只剩你还在活跃。你不知道为什么还不睡，也许是工作，也许是游戏，也许是单纯的不想结束这一天。太阳升起的时候，你又活过来了——至少暂时如此。" },
+  { id:74, title:"极限拖延", desc:"事情总等到截止日期当天，极限救场通关", rate:88, category:"成长", rarity:"common",
+    story:"截止日期前一晚，你在键盘上疯狂敲击，肾上腺素飙升。每次你都发誓下次一定提前开始，但每次历史都会重演。好消息是你总能赶上；坏消息是你的心脏可能受不了太久。" },
+  { id:75, title:"月光族", desc:"每月工资花清零，存款永远趋近于归零", rate:82, category:"生活", rarity:"common",
+    story:"发工资的那天是你最富有的日子，也是你消费欲望最强的一天。月底查看余额的时候，你再次发誓要存钱——但下个月的循环又会重新开始。" },
+  { id:76, title:"外卖依赖者", desc:"连续一周三餐全靠外卖续命，零下厨", rate:78, category:"生活", rarity:"common",
+    story:"你的厨房积了一层灰，外卖小哥成了你最熟悉的人。连续七天没有开火，你的胃在抗议，但你的懒惰在欢呼——毕竟谁愿意洗碗呢？" },
+  { id:77, title:"长期单身", desc:"成年后连续单身4年以上，从未开启长期恋爱支线", rate:37, category:"情感", rarity:"rare",
+    story:"朋友们一个个脱单、结婚、生娃，而你依然单身。有时候你也会焦虑，但更多时候你觉得自由真好。爱情这件事，急不来，也勉强不来。" },
+  { id:78, title:"异乡奋斗者", desc:"背井离乡在外打拼，一年回家不超过2次", rate:43, category:"职业", rarity:"rare",
+    story:"你拖着行李箱来到这座陌生的城市，出租屋很小，工作很累，但每个月往家里打钱的时候，你觉得一切都值了。你是一座桥，一头连着故乡，一头连着远方。" },
+  { id:79, title:"零负债", desc:"无房贷、车贷、网贷，真正无债一身轻", rate:9, category:"财务", rarity:"epic",
+    story:"在这个人人负债的时代，你居然做到了零负债。没有房贷的压力，没有信用卡账单的焦虑，你活得比大多数人轻松得多。这不是因为你赚得多，而是因为你懂得控制欲望。" },
+  { id:80, title:"不忘初心", desc:"成年后仍守住年少热爱", rate:55, category:"成长", rarity:"common",
+    story:"小时候你喜欢画画/音乐/写作/运动，长大后大家都劝你务实，但你偷偷保留着那份热爱。某天深夜你重新拿起画笔/吉他/笔，发现那个少年还在你身体里，从未离开。" },
+  { id:81, title:"挚友羁绊", desc:"拥有相处10年以上、可以完全无条件信任的挚友", rate:13, category:"社交", rarity:"epic",
+    story:"十年了，你们见过彼此最狼狈的样子，分享过最深藏的秘密，吵过架又和好。在这个人来人往的世界里，有一个人始终在那里——这比什么都珍贵。" },
+  { id:82, title:"双语达人", desc:"掌握一门母语以外的语言", rate:9.3, category:"技能", rarity:"epic",
+    story:"从ABC开始，你花了好几年才终于能用另一种语言流利表达。这门语言为你打开了一扇窗，让你看到了不一样的风景，认识了不一样的人。世界因此变得更大了。" },
+  { id:83, title:"首次远行", desc:"第一次独自离开家乡，前往陌生城市", rate:85, category:"成长", rarity:"common",
+    story:"火车缓缓驶离站台，家乡越来越远。你望着窗外的风景不断变化，既兴奋又不安。这是你人生中第一次真正意义上的「出发」，从这一刻起，你要学会一个人面对这个世界了。" },
+  { id:84, title:"短视频沉迷", desc:"连续8小时不间断刷视频，全程不离屏幕", rate:32, category:"娱乐", rarity:"rare",
+    story:"本来只想刷五分钟放松一下，结果一抬头天已经黑了。手机电量从80%掉到5%，你的脖子酸痛，但手指却停不下来。算法比你更了解你自己——这才是最可怕的地方。" },
+  { id:85, title:"24小时不眠", desc:"超过24小时不睡觉", rate:16.7, category:"成长", rarity:"epic",
+    story:"你盯着时钟，数字跳到了24小时以上。眼皮沉重，大脑迟钝，但你就是睡不着。也许是压力，也许是亢奋，也许只是单纯的失眠。无论如何，你正在挑战人类生理极限。" },
+  { id:86, title:"千小时玩家", desc:"单款游戏游玩总时长突破1000小时", rate:23.2, category:"娱乐", rarity:"epic",
+    story:"Steam 显示你在这款游戏上投入了 1000+ 小时。别人问你值不值得，你不知道怎么回答。那些深夜、那些队友、那些欢笑与泪水，都不是数字能衡量的。" },
+  { id:87, title:"故人走散", desc:"和年少最好的朋友，慢慢淡出彼此生活", rate:75, category:"社交", rarity:"common",
+    story:"你们曾经形影不离，无话不说。然后各自去了不同的城市，有了不同的圈子。聊天记录停留在去年的生日祝福。你不难过，只是偶尔会想：TA现在过得好吗？" },
+  { id:88, title:"遗憾分手", desc:"认真爱过一个，最终没能走到最后", rate:61, category:"情感", rarity:"common",
+    story:"你们认真过，努力过，也争吵过、妥协过，最终还是走散了。你删掉了合照，取关了社交账号，但某些歌你还是不敢听。遗憾是成长的代价，但至少，你学会了如何去爱。" },
+  { id:89, title:"五年坚持", desc:"坚持一件爱好5年以上从未放弃", rate:13, category:"兴趣", rarity:"epic",
+    story:"五年了，你还在画画/跑步/写作/摄影/弹琴。周围的人换了又换，但这件小事你一直坚持着。它不一定给你带来名利，但它让你的灵魂有一个可以栖息的地方。" },
+  { id:90, title:"享受独处", desc:"习惯一人吃饭出行逛街，享受独处时光", rate:43, category:"成长", rarity:"rare",
+    story:"一个人吃火锅，一个人看电影，一个人旅行——你不再觉得尴尬，反而享受这种自由。你学会了与自己相处，而这可能是人这一生中最重要的一项能力。" },
+  { id:91, title:"说走就走", desc:"临时起意，即兴开启一段旅程", rate:21.7, category:"旅行", rarity:"epic",
+    story:"周五晚上你突发奇想买了张票，周六早上已经在另一个城市的街头喝咖啡了。没有攻略，没有同伴，只有一个背包和一颗想去远方的心。这种冲动，是你给自己最好的礼物。" },
+  { id:92, title:"自我疗愈", desc:"低谷时期自我调节，不靠他人走出阴霾", rate:67, category:"成长", rarity:"common",
+    story:"那段日子很灰暗，你不想见任何人，也不想说话。但你每天逼自己做一点小事：洗个澡、出门走走、吃顿好的。慢慢地，光透进来了。你救了自己，而这份力量将伴随你一生。" },
+  { id:93, title:"双向奔赴", desc:"向喜欢的人表白，结果对方也喜欢你", rate:63, category:"情感", rarity:"common",
+    story:"你鼓起全部勇气说出「我喜欢你」，心跳快到要从嗓子眼里蹦出来。然后TA笑了——那种笑容告诉你：原来你也一直在等这句话。双向奔赴的爱，是这个世界上最美好的事。" },
+  { id:94, title:"岁岁平安", desc:"一生无重大意外灾祸，生活安稳顺遂", rate:78, category:"生活", rarity:"common",
+    story:"你可能觉得自己的人生平平淡淡，没有什么波澜壮阔的故事。但你知道吗？能够平平安安地长大、变老，本身就是一种了不起的幸运。平安，是最大的奢侈。" },
+  { id:95, title:"演唱会现场", desc:"亲临现场观看线下演唱会", rate:18.6, category:"娱乐", rarity:"epic",
+    story:"当舞台灯光暗下，全场尖叫响起，你跟着几万人一起合唱那首陪伴了你整个青春的歌。眼泪不知不觉就下来了——不是因为悲伤，而是因为此刻太美好。" },
+  { id:96, title:"电影爱好者", desc:"一年累计观看电影超30部", rate:23.5, category:"娱乐", rarity:"epic",
+    story:"你的片单越来越长，观影记录密密麻麻。每一部电影都是一扇窗，透过它你看见了不一样的人生。三十部，五十部，一百部——你的世界观在这些光影中悄然改变。" },
+  { id:97, title:"毛孩子陪伴", desc:"养宠猫狗超过5年，朝夕相伴", rate:29.3, category:"生活", rarity:"rare",
+    story:"五年了，TA从一只小小的奶猫/幼犬变成了你生活中最重要的部分。你不在家的时候TA会等你，你回家的时候TA会扑向你。TA不会说话，但TA给你的爱，比任何人都纯粹。" },
+  { id:98, title:"露营初体验", desc:"体验户外野外露营过夜", rate:10.3, category:"旅行", rarity:"epic",
+    story:"帐篷外的篝火噼啪作响，满天繁星近在咫尺，远处传来虫鸣和风声。城市的光污染在这里不存在。你躺在睡袋里，第一次看清了银河的全貌——原来夜空这么美。" },
+  { id:99, title:"乐器演奏", desc:"掌握一种乐器的演奏", rate:11.3, category:"兴趣", rarity:"epic",
+    story:"你的手指磨出了茧，和弦按得生疼，但你没有放弃。直到有一天，你能完整地弹出一首喜欢的曲子——那一刻，所有的痛苦都化作了音符，在空气中跳跃。" },
+  { id:100, title:"自驾旅行", desc:"拥有一次驾车出行的旅游经历", rate:35.4, category:"旅行", rarity:"rare",
+    story:"你握着方向盘，载着好友或爱人，沿着海岸线一路向南。音乐开着，窗摇下来，风吹进来，你们大声唱歌。这条路没有终点，但沿途的风景本身就是目的。" },
+  { id:101, title:"登顶高峰", desc:"徒步登顶高山俯瞰大地", rate:43.5, category:"旅行", rarity:"rare",
+    story:"最后几百米是最难的，每一步都需要调动全身的力气。但当终于站上山顶，云海在脚下翻涌，群山如波浪般延展——你明白了为什么要爬山：不是为了到达，是为了看见。" },
+  { id:102, title:"追剧达人", desc:"完整追完10部长篇剧集", rate:38.2, category:"娱乐", rarity:"rare",
+    story:"你熬夜追完了一部又一部剧，为角色的命运揪心，为剧情的反转惊叹。十部剧，几百个小时，你活在了一个又一个平行世界里。追剧不只是消遣，更是对另一种人生的体验。" },
+  { id:103, title:"长途徒步", desc:"完成三天以上的长途徒步路线", rate:87, category:"旅行", rarity:"common",
+    story:"三天，六十公里，你的脚底磨起了水泡，双腿像灌了铅。但当走到终点回望来路时，你发现自己比自己想象的更强。徒步教会你的不是走路，而是在疲惫中继续前行。" },
+  { id:104, title:"注意力被劫持", desc:"本想查资料/学习，结果刷了几个小时视频", rate:65.3, category:"娱乐", rarity:"common",
+    story:"你打开手机本来是想搜一道题/查一个资料，结果三个小时后你正对着屏幕傻笑。推荐算法把你带进了一个全新的世界——而你甚至不记得是怎么进来的。" },
+  { id:105, title:"泪失禁体质", desc:"为十部以上影视作品感动落泪", rate:35.3, category:"娱乐", rarity:"rare",
+    story:"你不是一个爱哭的人，但有些电影/电视剧就是能让你的眼泪止不住。第十次在电影院抹眼泪的时候你认了——敏感不是弱点，它是感受力的证明。" },
+  { id:106, title:"感恩母亲", desc:"给妈妈准备一份礼物或鲜花", rate:52.3, category:"家庭", rarity:"common",
+    story:"妈妈收到你送的礼物/花的时候，嘴上说着「乱花钱」，脸上却笑开了花。她可能一辈子都不会说出来，但这一刻她是世界上最幸福的母亲。别等到母亲节才想起来。" },
+  { id:107, title:"方言达人", desc:"熟练掌握2种及以上地方方言", rate:18.3, category:"技能", rarity:"epic",
+    story:"你不仅能说普通话，还能用两种以上方言和当地人无缝交流。每一种方言背后都是一个地域的文化密码，而你掌握了其中的好几把钥匙。" },
+  { id:108, title:"公共交通族", desc:"常年依赖地铁公交日常出行", rate:59.2, category:"生活", rarity:"common",
+    story:"你对这座城市每一条地铁线路的换乘站如数家珍。早高峰挤地铁的技巧你已经炉火纯青。你不是没有买车的能力，只是觉得公共交通也是一种生活方式。" },
+  { id:109, title:"极简社交", desc:"只维持3个以内的核心好友关系", rate:28.4, category:"社交", rarity:"rare",
+    story:"你的通讯录里人很多，但真正的朋友只有两三个。你不热衷于社交，也不觉得孤独。质量永远大于数量——这几个知己，胜过千百个点赞之交。" },
+  { id:110, title:"手工达人", desc:"独立完成手工DIY制作作品", rate:22.1, category:"兴趣", rarity:"epic",
+    story:"你从零开始，一块木头/一根线/一团泥，在你的手中逐渐变成了一个完整的物件。虽然不完美，但它是独一无二的。DIY 的快乐在于创造，而不在于成品是否精美。" },
+  { id:111, title:"落日收藏家", desc:"特意奔赴多地拍摄日落美景", rate:78, category:"兴趣", rarity:"common",
+    story:"你有一个相册专门存放日落照片：海边、山顶、城市天台、机场跑道……每一次日落都不一样，但每一场都同样壮美。你追逐的不是太阳，而是那一瞬间的宁静与感动。" },
+  { id:112, title:"睡眠不足", desc:"平均每日睡眠少于7小时", rate:36.2, category:"健康", rarity:"rare",
+    story:"六小时的睡眠已成常态，你习惯了用咖啡因对抗困倦。你告诉自己这是奋斗的代价，但你也知道，身体总有一天会来讨债的。" },
+  { id:113, title:"睡眠冠军", desc:"成功单日睡眠达10小时以上", rate:19.3, category:"健康", rarity:"epic",
+    story:"难得的一天假期，你关掉所有闹钟，一口气睡了十几个小时。醒来时阳光正好，肚子咕咕叫，大脑一片空白——这种什么都不用想的感觉，简直不要太爽。" },
+  { id:114, title:"千里奔赴", desc:"跨越千里只为见一个人", rate:11.6, category:"社交", rarity:"epic",
+    story:"你买了一张机票/火车票，穿越了大半个中国，只为了见那个人一面。见面时可能只是吃一顿饭、散一圈步，但这份跨越千里的心意，比什么都珍贵。" },
+  { id:115, title:"垂钓爱好者", desc:"每周户外垂钓享受安静独处时光", rate:72, category:"兴趣", rarity:"common",
+    story:"你坐在水边，鱼竿一动不动，世界安静得只剩下水流声和鸟鸣。钓不钓得到鱼并不重要，重要的是这几小时的放空与安宁。钓鱼的人不是在钓鱼，是在和自己对话。" },
+  { id:116, title:"游戏收藏家", desc:"入手多款游戏主机设备", rate:5.9, category:"兴趣", rarity:"legendary",
+    story:"你的柜子里摆满了各世代主机：Switch、PS5、Xbox、还有那些早已停产的经典机型。每一台都承载着不同年代的游戏回忆。你不是在收集机器，而是在收藏一段段青春。" },
+  { id:117, title:"幸存者", desc:"经历人生重大挑战并存活", rate:100, category:"成长", rarity:"common",
+    story:"你经历过人生的风暴——也许是疾病、也许是失去、也许是巨大的挫折。但你挺过来了。伤痕还在，但它们不再是伤口，而是勋章。你活着，而且比以前更强。" }
 ];
 
-// State
-let unlockedSet = new Set(JSON.parse(localStorage.getItem('earthOL_unlocked')||'[]'));
-let currentCategory='all', searchQuery='', sortAsc=true;
 
-const categories=[...new Set(ACHIEVEMENTS.map(a=>a.c))];
+// ── State ──
+let unlockedSet = new Set(
+  JSON.parse(localStorage.getItem('earthOL_unlocked') || '[]')
+);
+let currentCategory = 'all';
+let searchQuery = '';
+let sortAsc = true; // true = 最难(rate最低)排最前
 
-// Theme
-function initTheme(){ const t=localStorage.getItem('earthOL_theme'); setTheme(t||'system'); }
-function setTheme(theme){
-  let actual=theme==='system'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):theme;
-  document.documentElement.setAttribute('data-theme',actual);
-  localStorage.setItem('earthOL_theme',theme);
-  const icon=document.getElementById('themeIcon'), btn=document.getElementById('themeToggle');
-  if(theme==='system'){icon.innerHTML='&#127769;';btn.title='跟随系统'}
-  else if(actual==='dark'){icon.innerHTML='&#127769;';btn.title='深色模式'}
-  else{icon.innerHTML='&#9728;';btn.title='浅色模式'}
-  document.getElementById('themeColorMeta').content=actual==='dark'?'#08080d':'#f5f5f0';
-}
-function toggleTheme(){
-  const c=localStorage.getItem('earthOL_theme')||'system';
-  setTheme(c==='system'?'dark':c==='dark'?'light':'system');
-}
-function saveUnlockedState(){ localStorage.setItem('earthOL_unlocked',JSON.stringify([...unlockedSet])); }
+const categories = [...new Set(achievements.map(a => a.category))];
 
-// Stats
-function initStats(){
-  const total=ACHIEVEMENTS.length, unlocked=unlockedSet.size,
-    pct=total?Math.round(unlocked/total*100):0,
-    leg=ACHIEVEMENTS.filter(a=>a.R==='legendary').filter(a=>unlockedSet.has(a.id)).length,
-    epi=ACHIEVEMENTS.filter(a=>a.R==='epic').filter(a=>unlockedSet.has(a.id)).length;
-  document.getElementById('statsBar').innerHTML=
-    `<div class="stat-item"><div class="stat-number">${unlocked}/${total}</div><div class="stat-label">已解锁</div></div>
-     <div class="stat-item"><div class="stat-number">${pct}%</div><div class="stat-label">完成度</div></div>
-     <div class="stat-item"><div class="stat-number">${leg}</div><div class="stat-label">传说达成</div></div>
-     <div class="stat-item"><div class="stat-number">${epi}</div><div class="stat-label">史诗达成</div></div>`;
+// ── Theme ──
+function initTheme() {
+  const savedTheme = localStorage.getItem('earthOL_theme');
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else {
+    // Default: follow system
+    setTheme('system');
+  }
 }
 
-// Category tabs
-function initCategoryTabs(){
-  let h=`<button class="cat-tab ${currentCategory==='all'?'active':''}" onclick="filterCat('all')">全部</button>`;
-  categories.forEach(c=> h+=`<button class="cat-tab ${currentCategory===c?'active':''}" onclick="filterCat('${c}')">${c}</button>`);
-  document.getElementById('categoryTabs').innerHTML=h;
+function setTheme(theme) {
+  let actualTheme = theme;
+  if (theme === 'system') {
+    actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', actualTheme);
+  localStorage.setItem('earthOL_theme', theme);
+  
+  // Update theme toggle icon
+  const icon = document.getElementById('themeIcon');
+  const btn = document.getElementById('themeToggle');
+  if (theme === 'system') {
+    icon.innerHTML = '&#127769;';
+    btn.title = '当前：跟随系统（点击切换）';
+  } else if (actualTheme === 'dark') {
+    icon.innerHTML = '&#127769;';
+    btn.title = '当前：深色模式（点击切换）';
+  } else {
+    icon.innerHTML = '&#9728;';
+    btn.title = '当前：浅色模式（点击切换）';
+  }
+  
+  // Update theme-color meta
+  const meta = document.getElementById('themeColorMeta');
+  meta.content = actualTheme === 'dark' ? '#08080d' : '#f5f5f0';
 }
 
-function getDG(r){ return r<5?'legendary':r<10?'epic':r<50?'rare':'common'; }
-function getDL(k){ return{legendary:'传说·Legendary',epic:'史诗·Epic',rare:'稀有·Rare',common:'普通·Common'}[k]; }
-function getRT(r){ return{legendary:'传说',epic:'史诗',rare:'稀有',common:'普通'}[r]; }
+function toggleTheme() {
+  const current = localStorage.getItem('earthOL_theme') || 'system';
+  if (current === 'system') {
+    // System -> Dark
+    setTheme('dark');
+  } else if (current === 'dark') {
+    // Dark -> Light
+    setTheme('light');
+  } else {
+    // Light -> System
+    setTheme('system');
+  }
+}
 
-// Render Grid
-function renderGrid(){
-  let list=ACHIEVEMENTS.filter(a=>currentCategory==='all'||a.c===currentCategory);
-  if(searchQuery){ const q=searchQuery.toLowerCase(); list=list.filter(a=>a.t.toLowerCase().includes(q)||a.d.toLowerCase().includes(q)); }
-  list.sort((a,b)=>sortAsc?(a.r-b.r):(b.r-a.r));
-  const g={legendary:[],epic:[],rare:[],common:[]}; list.forEach(a=>g[getDG(a.r)].push(a));
-  let html='';
-  ['legendary','epic','rare','common'].forEach(k=>{
-    if(!g[k].length)return;
-    html+=`<div class="difficulty-label ${k}"><span>${getDL(k)}</span><span class="line"></span></div>`;
-    g[k].forEach((a,i)=>{
-      const u=unlockedSet.has(a.id), delay=(i*.05)+'s';
-      html+=`<div class="achievement-card ${u?'unlocked':'locked'}" style="animation-delay:${delay}" onclick="openModal(${a.id})">
-        <div class="card-top"><div class="icon-box">${svgIco(a.id)}${u?'<span class="sparkles">&#10024;</span>':''}</div>
-        <div class="card-info"><div class="card-title">${a.t}</div><div class="card-desc">${a.d}</div></div></div>
-        <div class="card-footer"><div class="rate-bar-container"><div class="rate-bar-bg"><div class="rate-bar-fill" style="width:${a.r}%"></div></div>
-        <div class="rate-text">全球达成率 <span>${a.r}%</span></div></div>
-        <div class="rarity-indicator rarity-${a.R||'common'}">${getRT(a.R)}</div></div></div>`;
+function saveUnlockedState() {
+  localStorage.setItem('earthOL_unlocked', JSON.stringify([...unlockedSet]));
+}
+
+// ── Render Stats ──
+function initStats() {
+  const total = achievements.length;
+  const unlocked = unlockedSet.size;
+  const pct = total > 0 ? Math.round((unlocked / total) * 100) : 0;
+  const legendary = achievements.filter(a => a.rarity === 'legendary').filter(a => unlockedSet.has(a.id)).length;
+  const epic = achievements.filter(a => a.rarity === 'epic').filter(a => unlockedSet.has(a.id)).length;
+  
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-item">
+      <div class="stat-number">${unlocked}/${total}</div>
+      <div class="stat-label">已解锁</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">${pct}%</div>
+      <div class="stat-label">完成度</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">${legendary}</div>
+      <div class="stat-label">传说达成</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">${epic}</div>
+      <div class="stat-label">史诗达成</div>
+    </div>
+  `;
+}
+
+// ── Render Category Tabs ──
+function initCategoryTabs() {
+  const container = document.getElementById('categoryTabs');
+  let html = `<button class="cat-tab ${currentCategory==='all'?'active':''}" onclick="filterCat('all')">全部</button>`;
+  categories.forEach(cat => {
+    html += `<button class="cat-tab ${currentCategory===cat?'active':''}" onclick="filterCat('${cat}')">${cat}</button>`;
+  });
+  container.innerHTML = html;
+}
+
+// ── Get difficulty group ──
+function getDifficultyGroup(rate) {
+  if (rate < 5) return 'legendary';
+  if (rate < 10) return 'epic';
+  if (rate < 50) return 'rare';
+  return 'common';
+}
+function getDifficultyLabel(key) {
+  return { legendary:'传说 · Legendary', epic:'史诗 · Epic', rare:'稀有 · Rare', common:'普通 · Common' }[key];
+}
+
+// ── Render Grid ──
+function renderGrid() {
+  let list = achievements.filter(a => currentCategory === 'all' || a.category === currentCategory);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(a => a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
+  }
+  // Sort by rate
+  list.sort((a,b) => sortAsc ? (a.rate - b.rate) : (b.rate - a.rate));
+
+  // Group by difficulty
+  const grouped = { legendary:[], epic:[], rare:[], common:[] };
+  list.forEach(a => { grouped[getDifficultyGroup(a.rate)].push(a); });
+
+  let html = '';
+  ['legendary','epic','rare','common'].forEach(key => {
+    if (grouped[key].length === 0) return;
+    html += `<div class="difficulty-label ${key}"><span>${getDifficultyLabel(key)}</span><span class="line"></span></div>`;
+    grouped[key].forEach((a,idx) => {
+      const unlocked = unlockedSet.has(a.id);
+      const delay = (idx * 0.05) + 's';
+      const icon = getIcon(a.id);
+      const iconSVG = getIconSVG(a.id);
+      html += `
+        <div class="achievement-card ${unlocked?'unlocked':'locked'}" 
+             style="animation-delay:${delay}" 
+             onclick="openModal(${a.id})">
+          <div class="card-top">
+            <div class="icon-box">
+              ${iconSVG}
+              ${unlocked ? '<span class="sparkles">&#10024;</span>' : ''}
+            </div>
+            <div class="card-info">
+              <div class="card-title">${a.title}</div>
+              <div class="card-desc">${a.desc}</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="rate-bar-container">
+              <div class="rate-bar-bg">
+                <div class="rate-bar-fill" style="width:${a.rate}%"></div>
+              </div>
+              <div class="rate-text">全球达成率 <span>${a.rate}%</span></div>
+            </div>
+            <div class="rarity-indicator rarity-${a.rarity}">${getRarityText(a.rarity)}</div>
+          </div>
+        </div>
+      `;
     });
   });
-  document.getElementById('grid').innerHTML=html;
-  document.getElementById('emptyState').style.display=list.length?'none':'block';
+
+  document.getElementById('grid').innerHTML = html;
+  document.getElementById('emptyState').style.display = list.length === 0 ? 'block' : 'none';
 }
 
-// Icons
-function svgIco(id){
-  const m={
-    1:`<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2L15 8.5L22 9.5L17 14.5L18 21.5L12 18.5L6 21.5L7 14.5L2 9.5L9 8.5Z"/></svg>`,
-    62:`<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
-    default:`<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`
+function getRarityText(r) {
+  return { legendary:'传说', epic:'史诗', rare:'稀有', common:'普通' }[r];
+}
+
+// ── Icons ──
+function getIconSVG(id) {
+  // Simplified SVG icons for each achievement
+  const icons = {
+    1: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2L15 8.5L22 9.5L17 14.5L18 21.5L12 18.5L6 21.5L7 14.5L2 9.5L9 8.5Z"/></svg>',
+    2: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M8 9.5s1-2 4-2 4 2 4 2"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M9 14.5s1.5 2 3 2 3-2 3-2"/></svg>',
+    3: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z"/></svg>',
+    4: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+    5: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M5 13h2v8H5v-8zm4-6h2v14H9V7zm4 3h2v11h-2V10zm4-7h2v18h-2V3z"/></svg>',
+    // Default icon
+    default: '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
   };
-  return m[id]||m.default;
+  return icons[id] || icons.default;
 }
 
-// Modal
-function openModal(id){
-  const a=ACHIEVEMENTS.find(x=>x.id===id); if(!a)return;
-  const u=unlockedSet.has(id);
-  document.getElementById('modalContent').innerHTML=`
-    <div class="modal-icon-wrap"><div class="modal-icon ${u?'':'locked-icon'}">${svgIco(id)}</div></div>
-    <div class="modal-cat-tag">${a.c}</div>
-    <div class="modal-title ${u?'':'locked-title'}">${a.t}</div>
-    <div class="modal-desc ${u?'':'locked-desc'}">${a.d}</div>
-    <div class="modal-stats"><div class="modal-stat"><div class="modal-stat-num ${u?'':'locked-stat'}">${a.r}%</div><div class="modal-stat-label">全球达成率</div></div>
-    <div class="modal-stat"><div class="modal-stat-num ${u?'':'locked-stat'}">${getRT(a.R)}</div><div class="modal-stat-label">稀有度</div></div></div>
-    ${u?`<div class="modal-story"><div class="modal-story-label">📖 成就故事</div><div class="modal-story-text">${a.s}</div></div>`:''}
-    <button class="modal-toggle-btn ${u?'':'locked-btn'}" onclick="toggleUnlock(${id})">${u?'🔒 标记为未解锁':'✨ 解锁此成就'}</button>`;
+function getIcon(id) {
+  const emojis = {
+    1:'🏆', 2:'👶', 3:'🚶', 4:'🗣️', 5:'🏫',
+    6:'🎓', 7:'📝', 8:'✍️', 9:'🎓', 10:'📚', 11:'🔬',
+    12:'🚲', 13:'🏊', 14:'🚗', 15:'🍳', 16:'🌍',
+    17:'🏠', 18:'🔑', 19:'🏡', 20:'🏰', 21:'🔨',
+    22:'🌙', 23:'🍺', 24:'💔', 25:'🎒', 26:'✈️',
+    27:'💘', 28:'🤝', 29:'💋', 30:'❤️', 31:'💍', 32:'👶',
+    33:'👨👩👦', 34:'🍽️', 35:'🥘',
+    36:'🏔️', 37:'🌏', 38:'🌍', 39:'🌌',
+    40:'🎮', 41:'🎬', 42:'🎤',
+    43:'👥', 44:'🤝', 45:'🤝',
+    46:'💼', 47:'📈', 48:'🚀', 49:'💰',
+    50:'🙅', 51:'📅', 52:'📖', 53:'🏃', 54:'🎵', 55:'💪', 56:'🩸', 57:'📊', 58:'🌱', 59:'🎤', 60:'⏰'
+  };
+  return emojis[id] || '🏆';
+}
+
+// ── Modal ──
+function openModal(id) {
+  const a = achievements.find(x => x.id === id);
+  if (!a) return;
+  const unlocked = unlockedSet.has(id);
+  const iconSVG = getIconSVG(id);
+  
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-icon-wrap">
+      <div class="modal-icon ${unlocked?'':'locked-icon'}">
+        ${iconSVG}
+      </div>
+    </div>
+    <div class="modal-cat-tag">${a.category}</div>
+    <div class="modal-title ${unlocked?'':'locked-title'}">${a.title}</div>
+    <div class="modal-desc ${unlocked?'':'locked-desc'}">${a.desc}</div>
+    <div class="modal-stats">
+      <div class="modal-stat">
+        <div class="modal-stat-num ${unlocked?'':'locked-stat'}">${a.rate}%</div>
+        <div class="modal-stat-label">全球达成率</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-num ${unlocked?'':'locked-stat'}">${getRarityText(a.rarity)}</div>
+        <div class="modal-stat-label">稀有度</div>
+      </div>
+    </div>
+    ${unlocked ? `
+      <div class="modal-story">
+        <div class="modal-story-label">📖 成就故事</div>
+        <div class="modal-story-text">${a.story}</div>
+      </div>
+    ` : ''}
+    <button class="modal-toggle-btn ${unlocked?'':'locked-btn'}" onclick="toggleUnlock(${id})">
+      ${unlocked ? '🔒 标记为未解锁' : '✨ 解锁此成就'}
+    </button>
+  `;
+  
   document.getElementById('modalBackdrop').classList.add('show');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
-function closeModal(){ document.getElementById('modalBackdrop').classList.remove('show'); document.body.style.overflow=''; }
 
-function toggleUnlock(id){ if(unlockedSet.has(id))unlockedSet.delete(id);else unlockedSet.add(id); saveUnlockedState(); renderGrid(); initStats(); openModal(id); }
-function resetProgress(){ if(!confirm('确定清除所有本地存档恢复初始状态？'))return; unlockedSet.clear(); saveUnlockedState(); renderGrid(); initStats(); showToast('进度已重置！'); }
-
-function exportProgress(){
-  const data={version:'2026.06.2',exportDate:new Date().toISOString(),unlocked:[...unlockedSet]};
-  const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const u=URL.createObjectURL(b), a=document.createElement('a'); a.href=u;
-  a.download=`EarthOnline-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(u);
-  showToast('存档已导出！');
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('show');
+  document.body.style.overflow = '';
 }
-function importProgress(input){
-  const f=input.files[0]; if(!f)return;
-  const r=new FileReader();
-  r.onload=function(e){
-    try{ const d=JSON.parse(e.target.result);
-      if(d.unlocked&&Array.isArray(d.unlocked)){unlockedSet=new Set(d.unlocked);saveUnlockedState();renderGrid();initStats();showToast(`导入成功！${unlockedSet.size}个`);}
-      else showToast('格式不正确');
-    }catch(e){showToast('解析失败');}
-  }; r.readAsText(f); input.value='';
+
+// ── Unlock ──
+function toggleUnlock(id) {
+  if (unlockedSet.has(id)) unlockedSet.delete(id);
+  else unlockedSet.add(id);
+  saveUnlockedState();
+  renderGrid();
+  initStats();
+  // Refresh modal
+  openModal(id);
 }
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 
-document.getElementById('searchInput').addEventListener('input',function(){ searchQuery=this.value; renderGrid(); });
-function toggleSort(){ sortAsc=!sortAsc; const b=document.getElementById('sortBtn'); b.classList.toggle('desc',!sortAsc); b.querySelector('.arrow').innerHTML=sortAsc?'&#9650;':'&#9660;'; renderGrid(); }
-function filterCat(cat){ currentCategory=cat; initCategoryTabs(); renderGrid(); }
+function resetProgress() {
+  if (!confirm('确定要清除所有本地存档，恢复初始未解锁状态吗？\n\n此操作只会清除当前设备的存档，不影响他人。')) return;
+  unlockedSet.clear();
+  saveUnlockedState();
+  renderGrid();
+  initStats();
+  showToast('进度已重置！页面已恢复初始状态。');
+}
 
-// Init
-initTheme(); initStats(); initCategoryTabs(); renderGrid();
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
-  const t=localStorage.getItem('earthOL_theme'); if(t==='system'||!t)setTheme('system');
+// ── Export / Import ──
+function exportProgress() {
+  const data = {
+    version: '2026.06',
+    exportDate: new Date().toISOString(),
+    unlocked: [...unlockedSet]
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `EarthOnline-Achievement-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('存档已导出！可发送给朋友导入。');
+}
+
+function importProgress(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.unlocked && Array.isArray(data.unlocked)) {
+        unlockedSet = new Set(data.unlocked);
+        saveUnlockedState();
+        renderGrid();
+        initStats();
+        showToast(`导入成功！已解锁 ${unlockedSet.size} 个成就。`);
+      } else {
+        showToast('文件格式不正确，请选择正确的存档文件。');
+      }
+    } catch(err) {
+      showToast('文件解析失败，请确认文件格式正确。');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Search ──
+document.getElementById('searchInput').addEventListener('input', function() {
+  searchQuery = this.value;
+  renderGrid();
+});
+
+// ── Sort ──
+function toggleSort() {
+  sortAsc = !sortAsc;
+  const btn = document.getElementById('sortBtn');
+  btn.classList.toggle('desc', !sortAsc);
+  btn.querySelector('.arrow').innerHTML = sortAsc ? '&#9650;' : '&#9660;';
+  renderGrid();
+}
+
+// ── Category filter ──
+function filterCat(cat) {
+  currentCategory = cat;
+  initCategoryTabs();
+  renderGrid();
+}
+
+// ── Init ──
+initTheme();
+initStats();
+initCategoryTabs();
+renderGrid();
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+  const savedTheme = localStorage.getItem('earthOL_theme');
+  if (savedTheme === 'system' || !savedTheme) {
+    setTheme('system');
+  }
 });
 </script>
 </body>
