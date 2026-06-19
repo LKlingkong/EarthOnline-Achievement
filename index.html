@@ -7,6 +7,7 @@
 <meta name="description" content="地球Online人生成就系统 - 把人生当作一款MMORPG，记录你的每一个成就">
 <meta name="theme-color" content="#08080d" id="themeColorMeta">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 /* ── Theme Variables ── */
 :root {
@@ -333,12 +334,12 @@ body {
   border-radius: 14px;
   padding: 16px 18px;
   cursor: pointer;
-  transition: all 0.35s ease;
+  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-  animation: cardIn 0.5s ease forwards;
+  animation: cardIn 0.3s ease forwards;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(6px);
 }
 @keyframes cardIn {
   to { opacity: 1; transform: translateY(0); }
@@ -399,7 +400,8 @@ body {
 .achievement-card.unlocked {
   background: var(--bg-card-unlocked);
   border-color: var(--accent-border);
-  box-shadow: 0 0 0 rgba(191,154,38,0), inset 0 0 30px rgba(191,154,38,0.02);
+  box-shadow: 0 0 0 rgba(191,154,38,0), inset 0 0 20px rgba(191,154,38,0.02);
+  transition: all 0.2s ease;
 }
 .achievement-card.unlocked::before {
   content: '';
@@ -414,6 +416,7 @@ body {
 .achievement-card.unlocked .icon-box {
   background: linear-gradient(135deg, rgba(191,154,38,0.15) 0%, rgba(191,154,38,0.04) 100%);
   border-color: rgba(191,154,38,0.25);
+  transition: all 0.2s ease;
 }
 [data-theme="light"] .achievement-card.unlocked .icon-box {
   background: linear-gradient(135deg, rgba(139,105,20,0.15) 0%, rgba(139,105,20,0.04) 100%);
@@ -421,22 +424,25 @@ body {
 }
 .achievement-card.unlocked .icon-svg {
   stroke: var(--icon-unlocked-stroke);
-  filter: drop-shadow(0 0 4px rgba(191,154,38,0.3));
+  filter: drop-shadow(0 0 3px rgba(191,154,38,0.3));
+  transition: all 0.2s ease;
 }
-.achievement-card.unlocked .card-title { color: #f5e6a3; }
+.achievement-card.unlocked .card-title { color: #f5e6a3; transition: color 0.2s ease; }
 [data-theme="light"] .achievement-card.unlocked .card-title { color: #8B6914; }
-.achievement-card.unlocked .card-desc { color: var(--text-secondary); }
+.achievement-card.unlocked .card-desc { color: var(--text-secondary); transition: color 0.2s ease; }
 .achievement-card.unlocked .rate-bar-fill {
   background: var(--rate-bar-unlocked);
+  transition: width 0.4s ease;
 }
 .achievement-card.unlocked:hover {
   border-color: rgba(191,154,38,0.4);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 30px rgba(191,154,38,0.06);
-  transform: translateY(-3px);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3), 0 0 20px rgba(191,154,38,0.05);
+  transform: translateY(-2px);
+  transition: all 0.15s ease;
 }
 [data-theme="light"] .achievement-card.unlocked:hover {
   border-color: rgba(139,105,20,0.4);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.1), 0 0 30px rgba(139,105,20,0.06);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.1), 0 0 20px rgba(139,105,20,0.05);
 }
 
 /* ── Card layout ── */
@@ -472,11 +478,11 @@ body {
   font-size: 10px;
   color: var(--accent-light);
   filter: drop-shadow(0 0 4px rgba(191,154,38,0.6));
-  animation: twinkle 2s ease infinite;
+  animation: twinkle 1s ease infinite;
 }
 @keyframes twinkle {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
 }
 .card-info { flex: 1; min-width: 0; }
 .card-title {
@@ -585,10 +591,10 @@ body {
   overflow-y: auto;
   padding: 30px 26px;
   position: relative;
-  animation: modalIn 0.3s ease;
+  animation: modalIn 0.2s ease;
 }
 @keyframes modalIn {
-  from { transform: scale(0.9); opacity: 0; }
+  from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
 .modal-close {
@@ -790,6 +796,9 @@ body {
     </button>
     <button class="action-btn export-btn" onclick="exportProgress()" title="导出存档到文件">
       &#128229; 导出
+    </button>
+    <button class="action-btn export-btn" onclick="exportImage()" title="导出成就卡片为一图流图片">
+      &#128247; 导出图片
     </button>
     <button class="action-btn export-btn" onclick="document.getElementById('importFile').click()" title="从文件导入存档">
       &#128228; 导入
@@ -1185,7 +1194,7 @@ function renderGrid() {
     html += `<div class="difficulty-label ${key}"><span>${getDifficultyLabel(key)}</span><span class="line"></span></div>`;
     grouped[key].forEach((a,idx) => {
       const unlocked = unlockedSet.has(a.id);
-      const delay = (idx * 0.05) + 's';
+      const delay = (idx * 0.02) + 's';
       const icon = getIcon(a.id);
       const iconSVG = getIconSVG(a.id);
       html += `
@@ -1338,6 +1347,127 @@ function exportProgress() {
   a.click();
   URL.revokeObjectURL(url);
   showToast('存档已导出！可发送给朋友导入。');
+}
+
+// ── Export Image (一图流) ──
+async function exportImage() {
+  const btn = event.target.closest('button');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '&#8987; 生成中...';
+  btn.disabled = true;
+
+  showToast('正在生成成就卡片图片，请稍候...');
+
+  try {
+    // Create a temporary container for the image
+    const imgContainer = document.createElement('div');
+    imgContainer.style.cssText = `
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      width: 1200px;
+      padding: 40px;
+      background: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#f5f5f0' : '#08080d'};
+      color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#1a1a1a' : '#e8e6e3'};
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    `;
+
+    // Calculate stats
+    const total = achievements.length;
+    const unlocked = unlockedSet.size;
+    const pct = total > 0 ? Math.round((unlocked / total) * 100) : 0;
+    const legendaryCount = achievements.filter(a => a.rarity === 'legendary').filter(a => unlockedSet.has(a.id)).length;
+    const epicCount = achievements.filter(a => a.rarity === 'epic').filter(a => unlockedSet.has(a.id)).length;
+    const rareCount = achievements.filter(a => a.rarity === 'rare').filter(a => unlockedSet.has(a.id)).length;
+    const commonCount = achievements.filter(a => a.rarity === 'common').filter(a => unlockedSet.has(a.id)).length;
+
+    // Build the image content
+    imgContainer.innerHTML = `
+      <div style="max-width: 1120px; margin: 0 auto;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)'};">
+          <h1 style="font-size: 42px; font-weight: 700; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#8B6914' : '#bf9a26'}; letter-spacing: 8px; margin-bottom: 8px;">地球 Online</h1>
+          <p style="font-size: 14px; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#888' : '#666'}; letter-spacing: 4px;">Achievement System · 人生成就系统</p>
+        </div>
+
+        <!-- Stats -->
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; flex-wrap: wrap;">
+          <div style="background: ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(139,105,20,0.08)' : 'rgba(191,154,38,0.04)'}; border: 1px solid ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(139,105,20,0.2)' : 'rgba(191,154,38,0.2)'}; border-radius: 12px; padding: 16px 32px; text-align: center; min-width: 120px;">
+            <div style="font-size: 28px; font-weight: 700; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#8B6914' : '#bf9a26'};">${unlocked}/${total}</div>
+            <div style="font-size: 11px; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#888' : '#666'}; margin-top: 4px; letter-spacing: 1px;">已解锁</div>
+          </div>
+          <div style="background: ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(139,105,20,0.08)' : 'rgba(191,154,38,0.04)'}; border: 1px solid ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(139,105,20,0.2)' : 'rgba(191,154,38,0.2)'}; border-radius: 12px; padding: 16px 32px; text-align: center; min-width: 120px;">
+            <div style="font-size: 28px; font-weight: 700; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#8B6914' : '#bf9a26'};">${pct}%</div>
+            <div style="font-size: 11px; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#888' : '#666'}; margin-top: 4px; letter-spacing: 1px;">完成度</div>
+          </div>
+          <div style="background: rgba(191,154,38,0.08); border: 1px solid rgba(191,154,38,0.2); border-radius: 12px; padding: 16px 32px; text-align: center; min-width: 120px;">
+            <div style="font-size: 28px; font-weight: 700; color: #bf9a26;">${legendaryCount}</div>
+            <div style="font-size: 11px; color: #666; margin-top: 4px; letter-spacing: 1px;">传说达成</div>
+          </div>
+          <div style="background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.15); border-radius: 12px; padding: 16px 32px; text-align: center; min-width: 120px;">
+            <div style="font-size: 28px; font-weight: 700; color: #a86fe0;">${epicCount}</div>
+            <div style="font-size: 11px; color: #666; margin-top: 4px; letter-spacing: 1px;">史诗达成</div>
+          </div>
+        </div>
+
+        <!-- Unlocked Achievements Grid -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+          ${achievements.filter(a => unlockedSet.has(a.id)).map(a => {
+            const icon = getIcon(a.id);
+            return `
+            <div style="background: ${document.documentElement.getAttribute('data-theme') === 'light' ? 'linear-gradient(145deg, #fffbe6 0%, #fff8e1 100%)' : 'linear-gradient(145deg, #1a170a 0%, #13110a 100%)'}; border: 1px solid ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(139,105,20,0.2)' : 'rgba(191,154,38,0.2)'}; border-radius: 14px; padding: 16px; display: flex; gap: 14px; align-items: flex-start;">
+              <div style="width: 48px; height: 48px; border-radius: 10px; background: ${document.documentElement.getAttribute('data-theme') === 'light' ? 'linear-gradient(135deg, rgba(139,105,20,0.15) 0%, rgba(139,105,20,0.04) 100%)' : 'linear-gradient(135deg, rgba(191,154,38,0.15) 0%, rgba(191,154,38,0.04) 100%)'}; border: 1px solid ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(139,105,20,0.25)' : 'rgba(191,154,38,0.25)'}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px;">
+                ${icon}
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 14px; font-weight: 600; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#8B6914' : '#f5e6a3'}; margin-bottom: 4px;">${a.title}</div>
+                <div style="font-size: 12px; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#666' : '#999'}; line-height: 1.5; margin-bottom: 8px;">${a.desc}</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="flex: 1; height: 4px; background: ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.04)'}; border-radius: 3px; overflow: hidden;">
+                    <div style="width: ${a.rate}%; height: 100%; border-radius: 3px; background: linear-gradient(90deg, ${document.documentElement.getAttribute('data-theme') === 'light' ? '#bf9a26' : '#8B6914'}, ${document.documentElement.getAttribute('data-theme') === 'light' ? '#d4a82a' : '#d4a82a'});"></div>
+                  </div>
+                  <span style="font-size: 10px; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#888' : '#666'};">${a.rate}%</span>
+                </div>
+              </div>
+            </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 30px 20px 10px; color: ${document.documentElement.getAttribute('data-theme') === 'light' ? '#aaa' : '#555'}; font-size: 11px; letter-spacing: 1px; margin-top: 40px; border-top: 1px solid ${document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)'};">
+          地球Online v2026.06 · 每个人都是自己人生的主角 · ${new Date().toLocaleDateString('zh-CN')}
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(imgContainer);
+
+    // Use html2canvas to capture
+    const canvas = await html2canvas(imgContainer, {
+      backgroundColor: document.documentElement.getAttribute('data-theme') === 'light' ? '#f5f5f0' : '#08080d',
+      scale: 2,
+      useCORS: true,
+      logging: false
+    });
+
+    // Remove temporary container
+    document.body.removeChild(imgContainer);
+
+    // Download the image
+    const link = document.createElement('a');
+    link.download = `EarthOnline-Achievements-${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    showToast('成就卡片图片已保存！可以去相册查看。');
+  } catch (err) {
+    console.error('Export image failed:', err);
+    showToast('图片导出失败，请重试。');
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
 }
 
 function importProgress(input) {
